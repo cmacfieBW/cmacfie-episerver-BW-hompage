@@ -1,0 +1,9 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+@model StartProjectGuide.Models.Pages.ContactPage
+<div class="column wrap span6 padded-16">
+    <h2>@Html.PropertyFor(m => m.Header)</h2>
+    <p>@Html.PropertyFor(m => m.Telephone)</p>
+    <p>@Html.PropertyFor(m => m.Email)</p>
+    <p>@Html.PropertyFor(m => m.Adress)</p>
+</div>

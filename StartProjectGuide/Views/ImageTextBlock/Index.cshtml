@@ -1,0 +1,25 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+@model StartProjectGuide.Models.Blocks.ImageTextBlock
+<div class="section image-text-block">
+    @if (Model.ImageBlock != null)
+    {
+        <div class="image-part">
+            @Html.Partial("~/Views/Shared/PagePartials/Image.cshtml", Model.ImageBlock)
+        </div>
+    }
+    @if (Model.TextBlock != null || Model.Button != null)
+    {
+        <div class="text-part">
+            @if (Model.TextBlock != null)
+            {
+                <h2>@Html.PropertyFor(m => m.TextBlock.Header)</h2>
+                @Html.PropertyFor(m => m.TextBlock.Body)
+            }
+            @if (Model.Button != null)
+            {
+                @Html.Partial("~/Views/Shared/PagePartials/Button.cshtml", Model.Button)
+            }
+        </div>
+    }
+</div>

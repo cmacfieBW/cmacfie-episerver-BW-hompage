@@ -1,0 +1,20 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+@using StartProjectGuide.Business
+@using StartProjectGuide.Business.Extensions
+@using StartProjectGuide.Models.Pages
+@{
+    var serviceStartPage = ContentShortcuts.GetServiceStartPage();
+    var servicePages = serviceStartPage.GetChildren();
+}
+<div class="carousell-wrapper">
+    <div class="carousell">
+        @if (servicePages != null)
+        {
+            foreach (var servicePage in servicePages.ToList().Select(p => p as ServicePage))
+            {
+                @Html.Partial("~/Views/Shared/PagePartials/ServiceCard.cshtml", servicePage)
+            }
+        }
+    </div>
+</div>

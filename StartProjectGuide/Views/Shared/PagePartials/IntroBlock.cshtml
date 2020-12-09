@@ -1,0 +1,21 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+@model  StartProjectGuide.Models.Blocks.IntroBlock
+<div class="intro-wrapper">
+    <div class="intro">
+        @if (Model.Header != null)
+        {
+            <h1 class="header">@Html.PropertyFor(m => m.Header)</h1>
+        }
+        @if (Model.Preamble != null)
+        {
+            <div class="preamble">
+                @Html.PropertyFor(m => m.Preamble)
+            </div>
+        }
+        @if (Model.Button != null)
+        {
+            @Html.Partial("~/Views/Shared/PagePartials/Button.cshtml", Model.Button)
+        }
+    </div>
+</div>

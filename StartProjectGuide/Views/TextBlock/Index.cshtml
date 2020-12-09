@@ -1,0 +1,7 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+@model StartProjectGuide.Models.Blocks.TextBlock
+<div class="section">
+    @Html.PropertyFor(m => m.Header)
+    @Html.PropertyFor(m => m.Body)
+</div>

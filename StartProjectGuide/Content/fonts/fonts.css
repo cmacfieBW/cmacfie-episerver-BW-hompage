@@ -1,0 +1,46 @@
+﻿/** Fonts **/
+@font-face {
+    font-family: "Cervo Neue Bold Italic";
+    src: url('cervo-neue/Typoforge Studio - CervoNeue-BoldNeueItalic.otf')
+}
+
+@font-face {
+    font-family: "Cervo Neue Bold";
+    src: url('cervo-neue/Typoforge Studio - CervoNeue-BoldNeue.otf')
+}
+
+@font-face {
+    font-family: "Cervo Neue";
+    src: url('cervo-neue/Typoforge Studio - CervoNeue-RegularNeue.otf')
+}
+
+@font-face {
+    font-family: "Cervo Neue Itatlic";
+    src: url('cervo-neue/Typoforge Studio - CervoNeue-RegularNeueItalic.otf')
+}
+
+@font-face {
+    font-family: "Cervo Neue Extra Bold";
+    src: url('cervo-neue/Typoforge Studio - CervoNeue-ExtraBoldNeue.otf')
+}
+
+@font-face {
+    font-family: "Cervo Neue Extra Bold Italic";
+    src: url('cervo-neue/Typoforge Studio - CervoNeue-ExtraBoldNeueItalic.otf')
+}
+
+@font-face {
+    font-family: "Cervo Neue Light";
+    src: url('cervo-neue/Typoforge Studio - CervoNeue-ExtraLightNeue.otf.otf')
+}
+
+@font-face {
+    font-family: "Roboto";
+    src: url(Roboto/Roboto-Regular.ttf);
+    font-weight: normal;
+}
+@font-face {
+    font-family: "Roboto";
+    src: url(Roboto/Roboto-Light.ttf);
+    font-weight: 300;
+}

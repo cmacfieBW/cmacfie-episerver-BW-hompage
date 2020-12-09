@@ -1,0 +1,22 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+@model StartProjectGuide.Models.Pages.WorkPage
+<a class="work-card span6" href="@Model.StaticLinkURL">
+    @if (Model.Name != null || Model.TeaserDescription != null)
+    {
+        <div class="work-card-text">
+            @if (Model.Name != null)
+            {
+                <h2 class="white">@Html.Raw(@Model.Name)</h2>
+            }
+            @if (Model.TeaserDescription != null)
+            {
+                <p class="white">@Html.Raw(@Model.TeaserDescription)</p>
+            }
+        </div>
+    }
+    @if (Model.Image != null)
+    {
+        @Html.Partial("~/Views/Shared/PagePartials/Image.cshtml", Model.Image)
+    }
+</a>

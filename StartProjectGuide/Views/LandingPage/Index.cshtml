@@ -1,0 +1,7 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+@model  StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Models.Pages.LandingPage>
+<div class="page">
+    @Html.Partial("~/Views/Shared/PagePartials/IntroBlock.cshtml", Model.CurrentPage.IntroSection)
+    @Html.PropertyFor(m => m.CurrentPage.MainContentArea)
+</div>

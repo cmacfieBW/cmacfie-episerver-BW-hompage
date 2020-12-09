@@ -1,0 +1,28 @@
+﻿@using EPiServer.Core
+@using StartProjectGuide.Models.Pages
+@using EPiServer.Web.Mvc.Html
+@using StartProjectGuide.Business
+@using StartProjectGuide.Business.Extensions
+@model StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Models.Pages.ContactLandingPage>
+@{
+    var contactPages = ContentShortcuts.GetContactPages().GetChildren();
+}
+@Html.Partial("~/Views/Shared/PagePartials/IntroBlock.cshtml", Model.CurrentPage.IntroSection)
+@if (contactPages != null)
+{
+    <div class="row  wrap">
+        @foreach (var contactPage in contactPages.ToList().Select(x => x as ContactPage))
+        {
+            <a  href="@contactPage.StaticLinkURL" class="contact-block column span6">
+                <div class="row">
+                    <img class="full-width" src="@Url.ContentUrl(contactPage.Image.Url)" alt="@contactPage.Image.Title" />
+                </div>
+
+                <div class="row contact-wrapper">
+                    @Html.Partial("~/Views/Shared/PagePartials/ContactInfo.cshtml", contactPage)
+                    <img class="icon" src="@Url.ContentUrl(contactPage.Icon.Url)" alt="@contactPage.Icon.Title"/>
+                </div>
+            </a>
+        }
+    </div>
+}

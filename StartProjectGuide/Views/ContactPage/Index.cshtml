@@ -1,0 +1,14 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+@model  StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Models.Pages.ContactPage>
+<div class="page contact-page">
+    @Html.Partial("~/Views/Shared/PagePartials/IntroBlock.cshtml", Model.CurrentPage.IntroSection)
+    <div class="contact-block row fill">
+        <div>
+            @Html.Partial("~/Views/Shared/PagePartials/ContactInfo.cshtml", Model.CurrentPage)
+        </div>
+        <div class="span6">
+            @Html.PropertyFor(m => m.CurrentPage.Image, new {CssClass = "full-width"})
+        </div>
+    </div>
+</div>

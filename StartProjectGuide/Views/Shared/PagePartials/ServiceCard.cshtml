@@ -1,0 +1,20 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+
+@model StartProjectGuide.Models.Pages.ServicePage
+<a href="@Model.StaticLinkURL">
+    <div class="section service-card">
+        <div class="img-wrapper">
+            @Html.Partial("~/Views/Shared/PagePartials/Image.cshtml", Model.Image)
+        </div>
+        @if (Model.Name != null)
+        {
+            <h2 class="service-card-header">@Html.Raw(Model.Name)</h2>
+        }
+        @if (Model.TeaserDescription != null)
+        {
+            <div class="description">@Html.Raw(Model.TeaserDescription)</div>
+        }
+        <a class="link" href="@Model.StaticLinkURL">Read more</a>
+    </div>
+</a>

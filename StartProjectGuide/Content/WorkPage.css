@@ -1,0 +1,92 @@
+﻿
+/** Image text block*/
+.work-card-wrapper {
+    flex: 1;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+    .work-card-wrapper .work-card {
+        flex: 1 1 calc(50% - 32px);
+        min-width: 500px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: flex-end;
+        transition: 200ms;
+        cursor: pointer;
+        margin: 16px;
+    }
+
+        .work-card-wrapper .work-card:hover {
+            transform: scale(1.04);
+        }
+
+        .work-card-wrapper .work-card img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .work-card-wrapper .work-card .work-card-text {
+            position: absolute;
+            padding: 30px 50px;
+            flex: 1;
+            display: flex;
+            flex-flow: column nowrap;
+            justify-content: flex-end;
+            color: white !important;
+        }
+
+        .work-card-wrapper .work-card h2 {
+            margin: 0;
+        }
+
+        .work-card-wrapper .work-card p {
+            margin: 0;
+            font-style: italic;
+            color: white !important;
+            font-size: 2vw;
+            opacity: 0;
+            max-height: 0;
+            transition: 200ms;
+            padding-right: 1vw;
+            overflow: hidden;
+        }
+
+        .work-card-wrapper .work-card::before {
+            opacity: 0.3;
+            transition: 200ms;
+            position: absolute;
+            top: 0;
+            left: 0;
+            content: "";
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .work-card-wrapper .work-card:hover::before {
+            opacity: 1;
+        }
+
+        .work-card-wrapper .work-card:hover p {
+            opacity: 1;
+            max-height: unset;
+            overflow: hidden;
+            margin-bottom: 5%;
+        }
+
+
+
+/** Carousell */
+.carousell-wrapper {
+    overflow: hidden;
+    width: 100%;
+}
+
+    .carousell-wrapper .carousell {
+        display: flex;
+        flex-flow: row nowrap;
+        overflow: auto;
+    }

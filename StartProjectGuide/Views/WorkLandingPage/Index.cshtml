@@ -1,0 +1,19 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+@using StartProjectGuide.Models.Pages
+@using StartProjectGuide.Business
+@using StartProjectGuide.Business.Extensions
+@model  StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Models.Pages.WorkLandingPage>
+@{
+    var workPages = ContentShortcuts.GetWorkStartPage().GetChildren();
+}
+@Html.Partial("~/Views/Shared/PagePartials/IntroBlock.cshtml", Model.CurrentPage.IntroSection)
+@if (workPages != null)
+{
+    <div class="work-card-wrapper">
+        @foreach (var workPage in workPages.ToList().Select(x => x as WorkPage))
+        {
+            @Html.Partial("~/Views/Shared/PagePartials/WorkCard.cshtml", workPage)
+        }
+    </div>
+}

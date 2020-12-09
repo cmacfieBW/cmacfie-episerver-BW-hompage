@@ -1,0 +1,28 @@
+﻿@using EPiServer.Core
+@using EPiServer
+@using EPiServer.ServiceLocation
+@using StartProjectGuide.Business;
+@using StartProjectGuide.Models.Pages;
+@using EPiServer.Web.Mvc.Html
+@using StartProjectGuide.Business.Extensions
+@model  StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Models.Pages.ServiceLandingPage>
+@{
+    var servicePages = ContentShortcuts.GetServiceStartPage().GetChildren();
+    var workStartPage = ContentShortcuts.GetWorkStartPage().Get<WorkLandingPage>() as WorkLandingPage;
+    var workPages = ContentShortcuts.GetWorkStartPage().GetChildren();
+}
+@Html.Partial("~/Views/Shared/PagePartials/IntroBlock.cshtml", Model.CurrentPage.IntroSection)
+<div class="services-wrapper">
+    @if (servicePages != null)
+    {
+        foreach (var servicePage in servicePages.ToList().Select(s => s as ServicePage))
+        {
+            @Html.Partial("~/Views/Shared/PagePartials/ServiceCard.cshtml", servicePage)
+        }
+    }
+
+</div>
+@if (Model.CurrentPage.MainContentArea != null && Model.CurrentPage.MainContentArea.Items.Any())
+{
+    @Html.PropertyFor(m => m.CurrentPage.MainContentArea)
+}

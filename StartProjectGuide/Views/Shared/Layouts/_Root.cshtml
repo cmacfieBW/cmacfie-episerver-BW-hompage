@@ -1,0 +1,35 @@
+﻿@using StartProjectGuide.Models.ViewModels;
+@using StartProjectGuide.Business.BaseClasses;
+@model  StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Business.BaseClasses.BasePageData>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link href="~/Content/fonts/fonts.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/Button.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/ServicePage.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/Layout.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/Misc.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/WorkPage.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/Footer.css" rel="stylesheet" type="text/css" media="all" />
+    <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    <script type="text/javascript">
+        tinyMCE.init({
+            force_p_newlines: false
+        });
+    </script> 
+</head>
+<body>
+    <div class="site-wrapper">
+        @{ Html.RenderPartial("Header", Model); }
+        <div class="body-content container">
+            <div class="content">
+                @RenderBody()
+            </div>
+        </div>
+        @{ Html.RenderPartial("Footer"); }
+    </div>
+</body>
+</html>

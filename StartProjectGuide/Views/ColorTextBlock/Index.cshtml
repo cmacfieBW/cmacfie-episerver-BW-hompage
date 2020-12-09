@@ -1,0 +1,17 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+@model StartProjectGuide.Models.Blocks.ColorTextBlock
+<div class="section color-text-block color-purple align-center">
+    @if (Model.TextBlock.Header != null)
+    {
+        <h2 class="white">@Html.PropertyFor(m => m.TextBlock.Header)</h2>
+    }
+    @if (Model.TextBlock.Body != null)
+    {
+        <div class="padded-32 center-text white">@Html.PropertyFor(m => m.TextBlock.Body)</div>
+    }
+    @if (Model.Button != null)
+    {
+        @Html.Partial("~/Views/Shared/PagePartials/Button.cshtml", Model.Button)
+    }
+</div>

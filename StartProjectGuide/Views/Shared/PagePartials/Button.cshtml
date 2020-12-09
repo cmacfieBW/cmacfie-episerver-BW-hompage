@@ -1,0 +1,9 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+@model StartProjectGuide.Models.Blocks.ButtonBlock
+@if (Model.Text != null)
+{
+    <a class="@Model.Style" href="@Model.Url">
+        @Html.PropertyFor(m => m.Text)
+    </a>
+}

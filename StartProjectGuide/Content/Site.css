@@ -1,0 +1,40 @@
+﻿@import "fonts/fonts.css";
+@import "Button.css";
+@import "ContactPage.css";
+@import "ServicePage.css";
+@import "Layout.css";
+@import "Misc.css";
+
+.image-text-block {
+    padding: 64px !important;
+    position: relative;
+}
+
+    .image-text-block .image-part {
+        position: relative;
+        padding: 64px;
+        width: 60%;
+    }
+
+        .image-text-block .image-part .img {
+        }
+
+    .image-text-block .text-part {
+        padding: 100px 0 100px 100px;
+        top: 32px;
+        background: white;
+        position: absolute;
+        z-index: 1;
+        width: calc(40% - 128px );
+        right: 64px;
+        box-shadow: 0 49px 60px -40px rgba(11,19,43,.1);
+    }
+
+        .image-text-block .text-part h2 {
+            margin-bottom: 16px;
+        }
+
+
+        .carousell .service-card {
+            min-width: 33vw !important
+        }

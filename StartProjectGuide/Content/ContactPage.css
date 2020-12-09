@@ -1,0 +1,37 @@
+﻿/** Contact page*/
+
+.contact-block {
+    flex: 0 0 50%;
+    overflow: hidden;
+}
+
+.contact-block > div:not(.contact-wrapper) {
+    justify-content: center;
+    flex: 1;
+    overflow: hidden;
+    flex: 0 0 30vw;
+}
+
+.contact-block > div:not(.contact-wrapper) img {
+    width: 100%;
+}
+
+
+
+.contact-block img {
+    overflow: hidden;
+}
+.contact-block img.icon {
+    max-width: 10vw;
+}
+
+.contact-block > div {
+    padding: 32px;
+    overflow: hidden;
+    display: flex;
+}
+
+.contact-block .contact-wrapper {
+    align-items: flex-start;
+    justify-content: space-between
+}

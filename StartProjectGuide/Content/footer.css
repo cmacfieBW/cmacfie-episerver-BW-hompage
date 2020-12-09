@@ -1,0 +1,40 @@
+﻿footer {
+    color: white;
+    background-color: #0b132b;
+    overflow: hidden;
+    display: flex;
+    padding: 3vw 10vw;
+    flex: 1 0 auto;
+}
+
+    footer .page-links a {
+        font-family: 'Cervo Neue Bold', sans-serif;
+        font-size: 1.5vw;
+        text-transform: uppercase;
+    }
+
+    footer img {
+        max-width: 5vw;
+    }
+
+    footer .social-media-link {
+        display: flex;
+        align-items: center;
+    }
+
+        footer .social-media-link .menu-item {
+            color: white;
+            font-size: 1vw;
+            margin: 16px;
+            position:relative
+        }
+
+            footer .social-media-link .menu-item:hover::after {
+                content: "";
+                height: 2px;
+                width: 100%;
+                background: white;
+                position: absolute;
+                left: 0;
+                bottom: -3px;
+            }

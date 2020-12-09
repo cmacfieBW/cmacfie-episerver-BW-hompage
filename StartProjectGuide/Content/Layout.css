@@ -1,0 +1,131 @@
+﻿
+/****************/
+/** Page layout */
+/****************/
+
+html {
+    height: 100%;
+    display: flex;
+    overflow-x: hidden;
+    font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+header, footer, .body-content {
+    padding: 40px;
+}
+
+body {
+    width: 100%;
+    margin: 0;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+    body .site-wrapper {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex: 1 0 700px;
+        flex-flow: column nowrap;
+    }
+
+.logo {
+    flex: 0 0 50px;
+}
+
+/** Menu row */
+.menu-items-row {
+    flex: 1 1;
+    display: flex;
+    flex-flow: row nowrap;
+    letter-spacing: 2px;
+    justify-content: center;
+    font-family: 'Cervo Neue Bold', sans-serif;
+    text-transform: uppercase;
+}
+
+    .menu-items-row .menu-items {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+        .menu-items-row .menu-items .menu-item {
+            position: relative;
+            cursor: pointer;
+            margin: 0 32px;
+            color: black;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+            .menu-items-row .menu-items .menu-item::after {
+                content: "";
+                width: 0;
+                opacity: 0;
+                transition: 200ms;
+                height: 2px;
+                background: #242424;
+                top: calc(100% + 4px);
+                left: 50%;
+                transform: translateX(-50%);
+                position: absolute;
+            }
+
+            .menu-items-row .menu-items .menu-item:hover::after {
+                width: 100%;
+                opacity: 1;
+            }
+
+.body-content {
+    flex: 1;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+}
+
+    .body-content > .content {
+        overflow: hidden;
+        padding: 0 1vw;
+    }
+
+header {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+    header .row {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-flow: row nowrap;
+    }
+
+        header .row .logo {
+            flex: 0 0 auto;
+        }
+
+        header .row .menu-items-row {
+            margin-left: 32px;
+            flex: 1 0;
+        }
+
+
+
+.intro-wrapper {
+    display: flex;
+    padding: 0 10vw;
+}
+
+    .intro-wrapper .intro {
+        flex: 0 0 67%;
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: flex-start;
+    }
+
+

@@ -1,0 +1,18 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+@using StartProjectGuide.Models.ViewModels
+@using StartProjectGuide.Models.Pages
+@using StartProjectGuide.Business
+@using StartProjectGuide.Business.Extensions
+@model  StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Models.Pages.StartPage>
+@{
+    var servicePages = ContentShortcuts.GetServiceStartPage().GetChildren();
+    var workStartPage = ContentShortcuts.GetWorkStartPage().Get<WorkLandingPage>() as WorkLandingPage;
+    var workPages = ContentShortcuts.GetWorkStartPage().GetChildren();
+}
+@Html.Partial("~/Views/Shared/PagePartials/IntroBlock.cshtml", Model.CurrentPage.IntroSection)
+@Html.Partial("~/Views/Shared/PagePartials/ServiceCardCarouselle.cshtml")
+
+<div class="content">
+    @Html.PropertyFor(m => m.CurrentPage.MainBodyContent)
+</div>

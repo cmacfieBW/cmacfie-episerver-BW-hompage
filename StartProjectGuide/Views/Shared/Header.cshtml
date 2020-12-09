@@ -1,0 +1,47 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web;
+@using EPiServer.Web.Mvc.Html
+@using StartProjectGuide.Models.ViewModels;
+@using StartProjectGuide.Business.BaseClasses;
+@using System.Web.Mvc;
+@using EPiServer.Editor
+@using StartProjectGuide.Business;
+@using StartProjectGuide.Business.Extensions
+@using StartProjectGuide.Models.Pages;
+@model  StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Business.BaseClasses.BasePageData>
+@{
+    var searchPage = ContentShortcuts.GetSearchPage().Get<FindSearchPage>() as FindSearchPage; ;
+    var startPage = ContentShortcuts.GetStartPage();
+    var pages = startPage.ContentLink.GetChildren().ToList().Select(a => a as BasePageData);
+}
+<header class="container">
+    <a href="/" class="logo">
+        <img src="~/Static/images/bw.svg" title="Start" />
+    </a>
+    <div class="menu-items-row">
+        <div class="menu-items">
+            @foreach (var page in pages)
+            {
+                <a class="menu-item" href="@Url.ContentUrl(page.ContentLink)">@page.Name</a>
+            }
+        </div>
+    </div>
+    @if (searchPage != null)
+    {
+        <form method="GET" action="@searchPage.StaticLinkURL" name="q" enctype="multipart/form-data">
+
+            <input type="text" tabindex="1" name="q" placeholder="Search..." />
+            <input type="submit" tabindex="2" class="btn" value="Search" />
+        </form>
+    }
+    <div class="social-media-links row">
+        @if (startPage.FacebookLink != null)
+        {
+            <a target="_blank" href="@Url.ContentUrl(startPage.FacebookLink)" class="menu-item"><img class="icon small inverted padded-16" src="~/Static/images/facebook-icon.svg" /></a>
+        }
+        @if (startPage.InstagramLink != null)
+        {
+            <a target="_blank" href="@Url.ContentUrl(startPage.InstagramLink)" class="menu-item"><img class="icon small inverted" src="~/Static/images/instagram-icon.svg" /></a>
+        }
+    </div>
+</header>

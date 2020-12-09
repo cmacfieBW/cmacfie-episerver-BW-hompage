@@ -1,0 +1,71 @@
+﻿/** Services */
+.services-wrapper {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+}
+
+.service-card {
+    flex: 1 1 calc(100% / 3 - 6vw);
+    min-width: 300px;
+    overflow: hidden;
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+    margin: 3vw;
+    color: black !important;
+}
+
+    .service-card > a:first-of-type {
+        flex: 1;
+    }
+
+    .service-card:last-of-type {
+        flex: 0 0 calc(100% / 3 - 16px);
+    }
+
+    .service-card .service-card-header {
+        color: #48247d;
+        font-size: 2.7vw;
+        flex-basis: calc(100% / 7);
+    }
+
+    .service-card .description {
+        flex: 1;
+        display: flex;
+        font-size: 1.4vw;
+        padding: 0 1vw;
+    }
+
+        .service-card .description p {
+            margin: 16px 0;
+            font-weight: 300;
+            font-size: 1.4vw;
+            font-family: "Roboto", sans-serif;
+        }
+
+
+    .service-card .img-wrapper {
+        overflow: hidden;
+        position: relative;
+    }
+
+
+        .service-card .img-wrapper img {
+            width: 80%;
+            padding-top: 3.5vw;
+            position: relative;
+            display: inline-block;
+            z-index: 10;
+        }
+
+        .service-card .img-wrapper::after {
+            content: "";
+            width: 100%;
+            padding-top: 12.6vw;
+            background: #f0eef6;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }

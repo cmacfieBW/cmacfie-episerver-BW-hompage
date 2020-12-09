@@ -1,0 +1,7 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+@model StartProjectGuide.Models.Blocks.ImageBlock
+@if (Model.Url != null)
+{
+    <img src="@Url.ContentUrl(Model.Url)" title="@Model.Title"/>
+}
