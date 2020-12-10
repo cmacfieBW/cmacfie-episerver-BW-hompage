@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
+using EPiServer.Security;
 using EPiServer.Shell.ObjectEditing;
 using EPiServer.SpecializedProperties;
 using Sgml;
@@ -29,7 +30,6 @@ namespace StartProjectGuide
 
             [Display(Name = "Social media", Order = 40)]
             public const string SocialMedia = "Social Media";
-
 
         }
 

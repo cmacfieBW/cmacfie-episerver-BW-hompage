@@ -22,6 +22,11 @@ namespace StartProjectGuide.Controllers
             return View(viewName, model);
         }
 
+        /// <summary>
+        /// Creates a model of interface IPageViewModel from the BasePageData class
+        /// </summary>
+        /// <param name="page"></param>
+        /// <returns></returns>
         public static IPageViewModel<BasePageData> CreateModel(BasePageData page)
         {
             var type = typeof(PageViewModel<>).MakeGenericType(page.GetOriginalType());

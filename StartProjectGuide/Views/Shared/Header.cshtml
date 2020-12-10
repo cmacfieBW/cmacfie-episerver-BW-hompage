@@ -10,7 +10,7 @@
 @using StartProjectGuide.Models.Pages;
 @model  StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Business.BaseClasses.BasePageData>
 @{
-    var searchPage = ContentShortcuts.GetSearchPage().Get<FindSearchPage>() as FindSearchPage; ;
+    var searchPage = ContentShortcuts.GetSearchLandingPageReference().Get<FindSearchPage>() as FindSearchPage; ;
     var startPage = ContentShortcuts.GetStartPage();
     var pages = startPage.ContentLink.GetChildren().ToList().Select(a => a as BasePageData);
 }
@@ -22,7 +22,10 @@
         <div class="menu-items">
             @foreach (var page in pages)
             {
-                <a class="menu-item" href="@Url.ContentUrl(page.ContentLink)">@page.Name</a>
+                if (page != null && page.VisibleInMenu)
+                {
+                    <a class="menu-item" href="@Url.ContentUrl(page.ContentLink)">@page.Name</a>
+                }
             }
         </div>
     </div>

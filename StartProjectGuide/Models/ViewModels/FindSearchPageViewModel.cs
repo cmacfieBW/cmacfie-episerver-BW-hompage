@@ -21,11 +21,6 @@ namespace StartProjectGuide.Models.ViewModels
         public string SearchQuery { get; private set; }
         public UnifiedSearchResults Results { get; set; }
 
-        public string GetPagingUrl(int pageNumber)
-        {
-            return UriUtil.AddQueryString(HttpContext.Current.Request.RawUrl, "p", pageNumber.ToString());
-        }
-
         public int PagingPage
         {
             get
@@ -38,6 +33,16 @@ namespace StartProjectGuide.Models.ViewModels
 
                 return pagingPage;
             }
+        }
+
+        /// <summary>
+        /// Gets the page index from the url
+        /// </summary>
+        /// <param name="pageNumber"></param>
+        /// <returns>A number as a string</returns>
+        public string GetPagingUrl(int pageNumber)
+        {
+            return UriUtil.AddQueryString(HttpContext.Current.Request.RawUrl, "p", pageNumber.ToString());
         }
     }
 }

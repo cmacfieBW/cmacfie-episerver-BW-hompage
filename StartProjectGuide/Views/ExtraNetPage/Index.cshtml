@@ -1,0 +1,22 @@
+﻿@using System.Web.Providers.Entities
+@using EPiServer.Core
+@using EPiServer.Filters
+@using EPiServer.Security
+@using StartProjectGuide.Business.Extensions
+@using EPiServer.Web.Mvc.Html
+@using StartProjectGuide
+
+@model  StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Models.Pages.ExtraNetPage>
+@{
+    var user = PrincipalInfo.Current;
+}
+@if (User.Identity.IsAuthenticated)
+{
+    <div>
+        @if (User.IsAdmin())
+        {
+            @Html.PropertyFor(m => m.CurrentPage.ForAdmin)
+        }
+        @Html.PropertyFor(m => m.CurrentPage.ForUsers)
+    </div>
+}

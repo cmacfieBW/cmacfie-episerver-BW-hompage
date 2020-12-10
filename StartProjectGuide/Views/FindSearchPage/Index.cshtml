@@ -3,7 +3,7 @@
 @using StartProjectGuide.Models.Pages;
 @model StartProjectGuide.Models.ViewModels.FindSearchPageViewModel
 @{
-    var searchPage = ContentShortcuts.GetSearchPage().Get<FindSearchPage>() as FindSearchPage;
+    var searchPage = ContentShortcuts.GetSearchLandingPageReference().Get<FindSearchPage>() as FindSearchPage;
     var pageIndex = @Model.PagingPage - 1;
     int numOfPages = @Model.Results.Count() / searchPage.ResultsPerPage;
     var resultsForThisPage = @Model.Results.ToList().Skip(searchPage.ResultsPerPage * pageIndex).Take(searchPage.ResultsPerPage);

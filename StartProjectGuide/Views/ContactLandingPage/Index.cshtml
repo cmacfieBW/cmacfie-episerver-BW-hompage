@@ -5,7 +5,7 @@
 @using StartProjectGuide.Business.Extensions
 @model StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Models.Pages.ContactLandingPage>
 @{
-    var contactPages = ContentShortcuts.GetContactPages().GetChildren();
+    var contactPages = ContentShortcuts.GetContactLandingPageReference().GetChildren();
 }
 @Html.Partial("~/Views/Shared/PagePartials/IntroBlock.cshtml", Model.CurrentPage.IntroSection)
 @if (contactPages != null)

@@ -7,9 +7,9 @@
 @using StartProjectGuide.Business.Extensions
 @model  StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Models.Pages.ServiceLandingPage>
 @{
-    var servicePages = ContentShortcuts.GetServiceStartPage().GetChildren();
-    var workStartPage = ContentShortcuts.GetWorkStartPage().Get<WorkLandingPage>() as WorkLandingPage;
-    var workPages = ContentShortcuts.GetWorkStartPage().GetChildren();
+    var servicePages = ContentShortcuts.GetServiceLandingPageReference().GetChildren();
+    var workStartPage = ContentShortcuts.GetWorkLandingPageReference().Get<WorkLandingPage>() as WorkLandingPage;
+    var workPages = ContentShortcuts.GetWorkLandingPageReference().GetChildren();
 }
 @Html.Partial("~/Views/Shared/PagePartials/IntroBlock.cshtml", Model.CurrentPage.IntroSection)
 <div class="services-wrapper">

@@ -11,33 +11,50 @@ namespace StartProjectGuide.Business
 {
     public class ContentShortcuts
     {
-
+        /// <summary>
+        /// Retrieves the Startpage of the application
+        /// </summary>
+        /// <returns>An object of StartPage class </returns>
         public static StartPage GetStartPage()
         {
             if (ContentReference.StartPage != null) return ContentReference.StartPage.Get<StartPage>() as StartPage;
             return new ContentReference(27).Get<StartPage>() as StartPage;
         }
 
-        public static ContentReference GetServiceStartPage()
+        /// <summary>
+        /// Gets a reference to the Service Landing page, if it exists, otherwise an empty reference
+        /// </summary>
+        /// <returns>A content reference to the ServiceLandingPage, or an empty reference</returns>
+        public static ContentReference GetServiceLandingPageReference()
         {
-            if (GetStartPage().ServiceStartPage != null)
-                return GetStartPage().ServiceStartPage;
-            return ContentReference.EmptyReference;
+            return GetStartPage().ServiceLandingPage ?? ContentReference.EmptyReference;
         }
 
-        public static ContentReference GetWorkStartPage()
+        /// <summary>
+        /// Gets a reference to the Work Landing page, if it exists, otherwise an empty reference
+        /// </summary>
+        /// <returns>A content reference to the WorkLandingPage, or an empty reference</returns>
+        public static ContentReference GetWorkLandingPageReference()
         {
-            return GetStartPage().WorkStartPage ?? ContentReference.EmptyReference;
+            return GetStartPage().WorkLandingPage ?? ContentReference.EmptyReference;
         }
 
-        public static ContentReference GetContactPages()
+        /// <summary>
+        /// Gets a reference to the Contact landing page, if it exists, otherwise an empty reference
+        /// </summary>
+        /// <returns>A content reference to the ContactLandingPage, or an empty reference</returns>
+        public static ContentReference GetContactLandingPageReference()
         {
-            return GetStartPage().ContactPage ?? ContentReference.EmptyReference;
+            return GetStartPage().ContactLandingPage ?? ContentReference.EmptyReference;
         }
 
-        public static ContentReference GetSearchPage()
+        /// <summary>
+        /// Gets a reference to the Search landing page, if it exists, otherwise an empty reference
+        /// </summary>
+        /// <returns>A content reference to the SearchLandingPage, or an empty reference</returns>
+        public static ContentReference GetSearchLandingPageReference()
         {
-            return GetStartPage().SearchPage ?? ContentReference.EmptyReference;
+            return GetStartPage().SearchLandingPage ?? ContentReference.EmptyReference;
         }
 
 

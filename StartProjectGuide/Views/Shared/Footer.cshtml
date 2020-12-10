@@ -8,7 +8,7 @@
 @model  StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Business.BaseClasses.BasePageData>
 @{
     var startPage = ContentShortcuts.GetStartPage();
-    var contacts = ContentShortcuts.GetContactPages().GetChildren();
+    var contacts = ContentShortcuts.GetContactLandingPageReference().GetChildren();
     XhtmlString dates = new XhtmlString(startPage.Date);
 }
 
