@@ -10,9 +10,8 @@
 @using StartProjectGuide.Models.Pages;
 @model  StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Business.BaseClasses.BasePageData>
 @{
-    var searchPage = ContentShortcuts.GetSearchLandingPageReference().Get<FindSearchPage>() as FindSearchPage; ;
+    var searchPageReference = ContentShortcuts.GetSearchLandingPageReference();
     var startPage = ContentShortcuts.GetStartPage();
-    var pages = startPage.ContentLink.GetChildren().ToList().Select(a => a as BasePageData);
 }
 <header class="container">
     <a href="/" class="logo">
@@ -20,17 +19,23 @@
     </a>
     <div class="menu-items-row">
         <div class="menu-items">
-            @foreach (var page in pages)
+            @if (startPage != null)
             {
-                if (page != null && page.VisibleInMenu)
+                
+                var pages = startPage.ContentLink.GetChildren().Select(a => a as BasePageData);
+                foreach (var page in pages)
                 {
-                    <a class="menu-item" href="@Url.ContentUrl(page.ContentLink)">@page.Name</a>
+                    if (page != null && page.VisibleInMenu)
+                    {
+                        <a class="menu-item" href="@Url.ContentUrl(page.ContentLink)">@page.Name</a>
+                    }
                 }
             }
         </div>
     </div>
-    @if (searchPage != null)
+    @if (!searchPageReference.IsNullOrEmpty())
     {
+        var searchPage = searchPageReference.Get<FindSearchPage>() as FindSearchPage; ;
         <form method="GET" action="@searchPage.StaticLinkURL" name="q" enctype="multipart/form-data">
 
             <input type="text" tabindex="1" name="q" placeholder="Search..." />
