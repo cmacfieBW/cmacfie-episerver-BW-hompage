@@ -2,7 +2,7 @@
 @using StartProjectGuide.Business.Extensions
 @using StartProjectGuide.Models.Pages;
 @model StartProjectGuide.Models.ViewModels.FindSearchPageViewModel
-@{
+@*@{
     var searchPage = ContentShortcuts.GetSearchLandingPageReference().Get<FindSearchPage>() as FindSearchPage;
     var pageIndex = @Model.PagingPage - 1;
     int numOfPages = @Model.Results.Count() / searchPage.ResultsPerPage;
@@ -33,4 +33,4 @@
         var index = i + 1;
         <a href="@Model.GetPagingUrl(index)"><li>@index</li></a>
     }
-</ul>
+</ul>*@

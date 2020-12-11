@@ -255,6 +255,7 @@
   <ItemGroup>
     <Compile Include="Business\BaseClasses\BaseBlockData.cs" />
     <Compile Include="Business\ContentShortcuts.cs" />
+    <Compile Include="Business\DynamicDataStore\WeatherDds.cs" />
     <Compile Include="Business\Extensions\ContentExtensions.cs" />
     <Compile Include="Business\Extensions\UserExtensions.cs" />
     <Compile Include="Business\Jobs\WriteDateJob.cs" />
@@ -304,6 +305,7 @@
     <Compile Include="Models\Pages\WorkPage.cs" />
     <Compile Include="Models\Pages\WorkLandingPage.cs" />
     <Compile Include="Models\SiteImageUrlcs.cs" />
+    <Compile Include="Models\ViewModels\ExtraNetPageViewModel.cs" />
     <Compile Include="Models\ViewModels\FindSearchPageViewModel.cs" />
     <Compile Include="Models\ViewModels\ImageViewModel.cs" />
     <Compile Include="Models\ViewModels\PageViewModel.cs" />
