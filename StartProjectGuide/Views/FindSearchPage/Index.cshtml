@@ -7,34 +7,35 @@
 }
 @if (!searchPageReference.IsNullOrEmpty())
 {
-    var searchPage = searchPageReference.Get<FindSearchPage>() as FindSearchPage;
-    var pageIndex = @Model.PagingPage - 1;
-    int numOfPages = @Model.Results.Count() / searchPage.ResultsPerPage;
-    var resultsForThisPage = @Model.Results.ToList().Skip(searchPage.ResultsPerPage * pageIndex).Take(searchPage.ResultsPerPage);
-    <form method="get" name="search">
-        <input type="text" tabindex="1" name="q" value="@Model.SearchQuery" />
-        <input type="submit" tabindex="2" class="btn" value="Search" />
-    </form>
-    if (Model.Results != null)
-    {
-        <p>Your search for <i>@Model.SearchQuery</i> resulted in @Model.Results.Count() hits</p>
-        <div class="listResult">
-            <ul>
-                @foreach (var item in resultsForThisPage)
-                {
-                    <li>
-                        <h4><a href="@item.Url">@item.Title</a></h4>
-                        @item.Excerpt
-                    </li>
-                }
-            </ul>
-        </div>
-    }
-    <ul>
-        @for (var i = 0; i < numOfPages; i++)
+    @{
+        var searchPage = ContentShortcuts.GetSearchLandingPageReference().Get<FindSearchPage>() as FindSearchPage;
+        var pageIndex = @Model.PagingPage - 1;
+        int numOfPages = @Model.Results.Count() / searchPage.ResultsPerPage;
+        var resultsForThisPage = @Model.Results.ToList().Skip(searchPage.ResultsPerPage * pageIndex).Take(searchPage.ResultsPerPage);
+        <form method="get" name="search">
+            <input type="text" tabindex="1" name="q" value="@Model.SearchQuery" />
+            <input type="submit" tabindex="2" class="btn" value="Search" />
+        </form>
+        if (Model.Results != null)
         {
-            var index = i + 1;
-            <a href="@Model.GetPagingUrl(index)"><li>@index</li></a>
+            <p>Your search for <i>@Model.SearchQuery</i> resulted in @Model.Results.Count() hits</p>
+            <div class="listResult">
+                <ul>
+                    @foreach (var item in resultsForThisPage)
+                    {
+                        <li>
+                            <h4><a href="@item.Url">@item.Title</a></h4>
+                            @item.Excerpt
+                        </li>
+                    }
+                </ul>
+            </div>
         }
-    </ul>
-}
+        <ul>
+            @for (var i = 0; i < numOfPages; i++)
+            {
+                var index = i + 1;
+                <a href="@Model.GetPagingUrl(index)"><li>@index</li></a>
+            }
+        </ul>
+    }
