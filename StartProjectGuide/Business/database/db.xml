@@ -1,0 +1,70 @@
+<cases>
+    <case created='1607673695' updated='1607673795' id='electrolux' title='Electrolux' longtitle='FULL STACK - FROM STATEGY TO LOCALISATION' image='/images/elux/5ae307cb0d7480d9f513e61c/5b435067e9023e3643f0d819_ELECTROLUC-Thumb-min.jpg'>
+        <tagline>Digital first - across Europe</tagline>
+        <description><![CDATA[ Together with Electrolux we are creating and optimising the digital experience across 99 brand sites in Europe. Our engagement at Electrolux is truly full stack - encompassing everything from central digital strategy to rollout and localization across all markets. Our mission is to drive sales for the Electrolux group - both online and offline - through best-in-class UX and campaign activation.]]></description>
+        
+        <promovideo id='289075744' />
+        <services>
+            <service title='strategy' />
+            <service title='ANALYS' />
+            <service title='UX' />
+            <service title='DESIGN' />
+            <service title='CONTENT' />
+            <service title='LOCALISATION &amp; SUPPORT' />
+        </services>
+
+        <sections>
+            <header type='h2' text='DRIVING SALES - ONLINE AND OFFLINE' />
+            <text><![CDATA[ Our strategy & UX efforts aim to both delight and convert consumers. We are constantly optimising the functionality of the brand sites in line with e-commerce best practice. We aim drive sales - both online and offline - through Electrolux’s e-tailing and retailing partners. <i>So far our efforts have yielded</i> in triple digit growth in conversion year-on-year. ]]></text>
+            <video id='289075282' style='site-wide' />
+            <colums>
+                <colum>
+                    <video id='289076279' />
+                </colum>
+                <colum>
+                     <video id='289075692' />
+                </colum>
+            </colums>
+            <header type='h3' text='CAMPAIGNS COME ALIVE' />
+            <text>To us activating campaigns is about more than simple images and copy. It is about making the material come alive - capturing the attention of consumers and serving rich content that aids their appliance choice throughout the purchase journey.</text>
+            <video id='289075616' />
+            <header type='h4' text='SIMPLIFYING ownership' />
+            <text>We have worked closely with Electrolux to establish and execute email based marketing automation that helps consumers get the best possible start with their appliance. Beyond onboarding we are actively working to improve the complete post-purchase experience.</text>
+            <video id='289075980' />
+            <header text='THE DIGITAL HUB - EMPOWERING LOCAL MARKETS' animate='true' />
+            <text>The Digital Hub is at the heart of our support organisation that serves all digital managers across Europe. It facilitates communication between the central and local teams and is one-stop-shop for markets regarding everything digital. Markets can raise support tickets, request analytics, browse a large knowledge base of articles and see the current status of feature development and campaigns.</text>
+            <image url='/images/elux/5b9a5109ea479f690ca3d3a2_bw-elux-helpcenter.png' title='Elux image' />
+            <section background='#cc33cc'>
+                <header type='h5' text='DIGITALISING WHITE GOODS' />
+                <text>Bombayworks is Electrolux Group’s main digital partner in Europe. The collaboration has grown into a true partnership. Today we deliver strategy, analysis, UX, design, content, localisation and support services across all brands and markets in Europe.</text>
+            </section>
+        </sections>
+    </case>
+
+    <case created='1607673695' updated='1607673995' id='orkla' title='Orkla' image='/images/orkla/5b39f3a0af9676a2838be4b6_orkla-brands-case-thumb (1).jpg'>
+        <description><![CDATA[ Norwegian FMCG powerhouse Orkla has close to 200 brands in their global portfolio. In our capacity as main digital partner, we were tasked to meet current and future digital communication demands, establish a common platform and infrastructure for all web presence and aid in creating a governance model for digital presence <strong>to maximize synergies and minimize costs in place</stong>. ]]></description>
+        <smallDescription style='bold'><![CDATA[WORDPRESS MULTI-SITE WITH INTEGRATIONS TO PRESS, PIM & CRM.]]></smallDescription>
+        <tagline>200 brand sites, harmonised</tagline>
+    
+        <promovideo id='277617151' />
+        <services>
+            <service title='strategy' />
+            <service title='ANALYS' />
+            <service title='Development' url='/servces/development' />
+            <service title='DESIGN' />
+            
+        </services>
+
+        <sections>
+            <header type='h2' text='ONE PLATFORM – ONE ORKLA' />
+            <text><![CDATA[ Our strategy & UX efforts aim to both delight and convert consumers. We are constantly optimising the functionality of the brand sites in line with e-commerce best practice. We aim drive sales - both online and offline - through Electrolux’s e-tailing and retailing partners. <i>So far our efforts have yielded</i> in triple digit growth in conversion year-on-year. ]]></text>
+            <image url='https://assets-global.website-files.com/5adef433fffd5a249fa40da0/5b390b8647626219a37c7b95_bitmap%402x.png' style='site-wide' />
+            <text><![CDATA[ The One platform is designed to enable re-use of functionalities, integrations and knowledge. By consolidating all digital communication to a single platform we also ensure quality across Orkla’s full organisation. The platform uses a common setup for insights, analytics and online marketing activities and ensures quicker time to market for new initiatives. Consisting of a large number of modules – each brand can have its own unique expression but still adhere to Orkla’s digital regulations and policies. ]]></text>
+            <section background='#cc33cc'>
+                <header type='h3' text='Digitalising a FMCG powerhouse' />
+                <text>Bombayworks is Orkla Group’s main global partner in digital endeavours. Starting on a small scale in 2008, the collaboration has over time grown into a partnership. Today we are responsible for delivering strategy, insights, analysis, design, development, content, localization and support services to all group companies, subsidiaries and brands.</text>
+            </section>
+        </sections>
+    </case>
+
+</cases>

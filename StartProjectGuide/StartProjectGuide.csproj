@@ -510,6 +510,7 @@
     <Content Include="bin\System.Web.WebPages.Razor.dll" />
     <Content Include="bin\System.Web.WebPages.Razor.xml" />
     <Content Include="bin\System.Web.WebPages.xml" />
+    <Content Include="Business\database\db.xml" />
     <Content Include="Content\Footer.css" />
     <Content Include="Content\Misc.css" />
     <Content Include="Content\Layout.css" />

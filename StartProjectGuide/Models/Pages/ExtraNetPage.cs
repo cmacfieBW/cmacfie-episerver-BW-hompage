@@ -28,6 +28,5 @@ namespace StartProjectGuide.Models.Pages
             GroupName = SystemTabNames.Content,
             Order = 1)]
         public virtual XhtmlString ForUsers { get; set; }
-
     }
 }

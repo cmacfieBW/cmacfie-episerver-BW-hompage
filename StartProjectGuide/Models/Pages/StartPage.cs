@@ -39,6 +39,10 @@ namespace StartProjectGuide.Models.Pages
         [AllowedTypes(typeof(FindSearchPage))]
         public virtual PageReference SearchLandingPage { get; set; }
 
+        [Display(Name = "Extra net page", Description = "Extra net page", GroupName = Global.GroupNames.SiteSettings, Order = 30)]
+        [AllowedTypes(typeof(ExtraNetPage))]
+        public virtual PageReference ExtraNetPageReference { get; set; }
+
         [Display(Name = "Content", Description = "Main body content", GroupName = SystemTabNames.Content, Order = 30)]
         [AllowedTypes(typeof(WorksPreviewBlock), typeof(ImageTextBlock), typeof(ColorTextBlock), typeof(TextBlock))]
         public virtual ContentArea MainBodyContent { get; set; }

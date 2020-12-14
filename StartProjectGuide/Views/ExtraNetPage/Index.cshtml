@@ -7,39 +7,57 @@
 @using StartProjectGuide
 @using StartProjectGuide.Business
 @using StartProjectGuide.Business.DynamicDataStore
+@using StartProjectGuide.Models.Pages
 
-@model  StartProjectGuide.Business.Interfaces.IPageViewModel<StartProjectGuide.Models.Pages.ExtraNetPage>
+@model StartProjectGuide.Models.ViewModels.ExtraNetPageViewModel
 @{
-    var weatherEntries = WeatherDds.GetWeatherEntries(this.Model.CurrentPage.ContentLink);
-    WeatherDds.Weather w = new WeatherDds.Weather();
+    var extraNetPageReference = ContentShortcuts.GetExtraNetPageReference();
 }
-@if (User.Identity.IsAuthenticated)
+@if (!extraNetPageReference.IsNullOrEmpty())
 {
-    <div>
-        @if (User.IsAdmin())
-        {
-            @Html.PropertyFor(m => m.CurrentPage.ForAdmin)
-        }
-        @Html.PropertyFor(m => m.CurrentPage.ForUsers)
-    </div>
-    
-    <form method="get" name="search">
-        <input type="text" tabindex="1" name="q" value="" />
-        <input type="submit" tabindex="2" class="btn" value="Search" />
-    </form>
-    <span>Weather</span>
-    <form action="" name="">
+    var extraNetPage = extraNetPageReference.Get<ExtraNetPage>() as ExtraNetPage;
 
-    </form>
-}
-@if (User.IsAdmin())
-{
-    <div>
-        @foreach (var entry in weatherEntries)
+    if (User.Identity.IsAuthenticated)
+    {
+        <div>
+            @if (User.IsAdmin())
+            {
+                @Html.Raw(extraNetPage.ForAdmin)
+            }
+            @Html.Raw(extraNetPage.ForUsers)
+        </div>
+
+        if (ViewBag.ActionMessage != null)
         {
-            <span>@entry.TimeStamp</span>
-            <span>@entry.WeatherDescription</span>
-            <span>@entry.WeatherComment</span>
+            <h1>@ViewBag.ActionMessage</h1>
         }
-    </div>
+        <h2>Describe the weather</h2>
+        <form method="get" action="@Url.Action("AddWeatherEntry", "ExtraNetPage")" enctype="multipart/form-data">
+            <span class="column padded-16">
+                <label class="fill " for="desc">Description</label>
+                <input required id="desc" type="text" tabindex="10" name="description" placeholder="Describe the weather..." />
+            </span>
+            <span class="column padded-16">
+                <label for="comment">Comment</label>
+                <input required id="comment" type="text" tabindex="11" name="comment" placeholder="Add a comment about the weather..." />
+            </span>
+            <span class="row justify-center"><input type="submit" tabindex="12" class="btn" value="Save" /></span>
+        </form>
+
+        if (User.IsAdmin())
+        {
+            foreach (var entry in WeatherDds.GetWeatherEntries())
+            {
+                <div class="row justify-space-between">
+                    <span class="padded-16">
+                        @Html.Raw(entry.UserName)
+                    </span>
+                    <span class="padded-16">@Html.Raw(entry.TimeStamp)</span>
+                    <span class="padded-16">@Html.Raw(entry.WeatherDescription)</span>
+                    <span class="padded-16">@Html.Raw(entry.WeatherComment)</span>
+                    <a href="@Url.Action("DeleteWeatherEntry", "ExtraNetPage", new {entryId = entry.Id})"> <button>Delete</button></a>
+                </div>
+            }
+        }
+    }
 }

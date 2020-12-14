@@ -57,6 +57,15 @@ namespace StartProjectGuide.Business
             return GetStartPage().SearchLandingPage ?? ContentReference.EmptyReference;
         }
 
+        /// <summary>
+        /// Gets a reference to the Extra Net page, if it exists, otherwise an empty reference
+        /// </summary>
+        /// <returns>A content reference to the SearchLandingPage, or an empty reference</returns>
+        public static ContentReference GetExtraNetPageReference()
+        {
+            return GetStartPage().ExtraNetPageReference ?? ContentReference.EmptyReference;
+        }
+
 
     }
 }

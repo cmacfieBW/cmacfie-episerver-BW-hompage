@@ -19,6 +19,10 @@ namespace StartProjectGuide.Models.ViewModels
             SearchQuery = searchQuery;
         }
         public string SearchQuery { get; private set; }
+
+        /// <summary>
+        /// Search results
+        /// </summary>
         public UnifiedSearchResults Results { get; set; }
 
         public int PagingPage
