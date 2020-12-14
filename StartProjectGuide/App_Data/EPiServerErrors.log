@@ -365,3 +365,98 @@ System.MissingMethodException: Method 'StartProjectGuide.Business.DynamicDataSto
    at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
    at System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
    at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+2020-12-14 12:03:49,409 [7] ERROR EPiServer.DataAbstraction.ScheduledJob: Job StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob failed for the job 'LoadOrUpdatePageJob' with jobId ='98d3c96d-a225-435b-8d13-c77fe9eef840' 
+System.ComponentModel.DataAnnotations.ValidationException: The page name must contain at least one visible character.
+   at EPiServer.Core.ContentProvider.ThrowValidationException(ICollection`1 errors)
+   at EPiServer.Core.ContentProvider.Validate(IContent content, ContentSaveValidationContext saveValidationContext)
+   at EPiServer.Core.Internal.DefaultContentRepository.Save(IContent content, SaveAction action, AccessLevel access)
+   at EPiServer.IContentRepositoryExtension.Save(IContentRepository repository, IContent content, SaveAction action)
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.Execute() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 52
+   at EPiServer.Scheduler.Internal.DefaultScheduledJobExecutor.<Execute>d__31.MoveNext()
+System.ComponentModel.DataAnnotations.ValidationException: The page name must contain at least one visible character.
+   at EPiServer.Core.ContentProvider.ThrowValidationException(ICollection`1 errors)
+   at EPiServer.Core.ContentProvider.Validate(IContent content, ContentSaveValidationContext saveValidationContext)
+   at EPiServer.Core.Internal.DefaultContentRepository.Save(IContent content, SaveAction action, AccessLevel access)
+   at EPiServer.IContentRepositoryExtension.Save(IContentRepository repository, IContent content, SaveAction action)
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.Execute() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 52
+   at EPiServer.Scheduler.Internal.DefaultScheduledJobExecutor.<Execute>d__31.MoveNext()
+2020-12-14 15:55:58,811 [12] ERROR EPiServer.DataAbstraction.ScheduledJob: Job StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob failed for the job 'LoadOrUpdatePageJob' with jobId ='98d3c96d-a225-435b-8d13-c77fe9eef840' 
+System.Xml.XmlException: Name cannot begin with the '
+' character, hexadecimal value 0x0A. Line 42, position 13.
+   at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+   at System.Xml.XmlTextReaderImpl.Throw(String res, String[] args)
+   at System.Xml.XmlTextReaderImpl.ParseQName(Boolean isQName, Int32 startOffset, Int32& colonPos)
+   at System.Xml.XmlTextReaderImpl.ParseElement()
+   at System.Xml.XmlTextReaderImpl.ParseElementContent()
+   at System.Xml.XmlTextReaderImpl.Read()
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.Execute() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 109
+   at EPiServer.Scheduler.Internal.DefaultScheduledJobExecutor.<Execute>d__31.MoveNext()
+System.Xml.XmlException: Name cannot begin with the '
+' character, hexadecimal value 0x0A. Line 42, position 13.
+   at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+   at System.Xml.XmlTextReaderImpl.Throw(String res, String[] args)
+   at System.Xml.XmlTextReaderImpl.ParseQName(Boolean isQName, Int32 startOffset, Int32& colonPos)
+   at System.Xml.XmlTextReaderImpl.ParseElement()
+   at System.Xml.XmlTextReaderImpl.ParseElementContent()
+   at System.Xml.XmlTextReaderImpl.Read()
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.Execute() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 109
+   at EPiServer.Scheduler.Internal.DefaultScheduledJobExecutor.<Execute>d__31.MoveNext()
+2020-12-14 16:28:27,355 [7] ERROR EPiServer.DataAbstraction.ScheduledJob: Job StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob failed for the job 'LoadOrUpdatePageJob' with jobId ='98d3c96d-a225-435b-8d13-c77fe9eef840' 
+System.ArgumentNullException: The provided content link does not have a value.
+Parameter name: contentLink
+   at EPiServer.Core.Internal.DefaultContentLoader.Get[T](ContentReference contentLink, LoaderOptions loaderOptions)
+   at EPiServer.Core.Internal.DefaultContentLoader.Get[T](ContentReference contentLink)
+   at EPiServer.Core.Internal.DefaultContentRepository.Get[T](ContentReference contentLink)
+   at EPiServer.Core.Internal.DefaultContentRepository.GetDefault[T](ContentReference parentLink, Int32 contentTypeID, CultureInfo language)
+   at EPiServer.Core.Internal.DefaultContentRepository.GetDefault[T](ContentReference parentLink, CultureInfo language)
+   at EPiServer.Core.Internal.DefaultContentRepository.GetDefault[T](ContentReference parentLink)
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.GetPageWithName(String pageName) in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 64
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.CreateOrUpdatePage() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 146
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.Execute() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 168
+   at EPiServer.Scheduler.Internal.DefaultScheduledJobExecutor.<Execute>d__31.MoveNext()
+System.ArgumentNullException: The provided content link does not have a value.
+Parameter name: contentLink
+   at EPiServer.Core.Internal.DefaultContentLoader.Get[T](ContentReference contentLink, LoaderOptions loaderOptions)
+   at EPiServer.Core.Internal.DefaultContentLoader.Get[T](ContentReference contentLink)
+   at EPiServer.Core.Internal.DefaultContentRepository.Get[T](ContentReference contentLink)
+   at EPiServer.Core.Internal.DefaultContentRepository.GetDefault[T](ContentReference parentLink, Int32 contentTypeID, CultureInfo language)
+   at EPiServer.Core.Internal.DefaultContentRepository.GetDefault[T](ContentReference parentLink, CultureInfo language)
+   at EPiServer.Core.Internal.DefaultContentRepository.GetDefault[T](ContentReference parentLink)
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.GetPageWithName(String pageName) in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 64
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.CreateOrUpdatePage() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 146
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.Execute() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 168
+   at EPiServer.Scheduler.Internal.DefaultScheduledJobExecutor.<Execute>d__31.MoveNext()
+2020-12-14 16:29:19,389 [7] ERROR EPiServer.DataAbstraction.ScheduledJob: Job StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob failed for the job 'LoadOrUpdatePageJob' with jobId ='98d3c96d-a225-435b-8d13-c77fe9eef840' 
+System.ArgumentNullException: The provided content link does not have a value.
+Parameter name: contentLink
+   at EPiServer.Core.Internal.DefaultContentLoader.Get[T](ContentReference contentLink, LoaderOptions loaderOptions)
+   at EPiServer.Core.Internal.DefaultContentLoader.Get[T](ContentReference contentLink)
+   at EPiServer.Core.Internal.DefaultContentRepository.Get[T](ContentReference contentLink)
+   at EPiServer.Core.Internal.DefaultContentRepository.GetDefault[T](ContentReference parentLink, Int32 contentTypeID, CultureInfo language)
+   at EPiServer.Core.Internal.DefaultContentRepository.GetDefault[T](ContentReference parentLink, CultureInfo language)
+   at EPiServer.Core.Internal.DefaultContentRepository.GetDefault[T](ContentReference parentLink)
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.GetPageWithName(String pageName) in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 64
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.CreateOrUpdatePage() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 146
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.Execute() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 168
+   at EPiServer.Scheduler.Internal.DefaultScheduledJobExecutor.<Execute>d__31.MoveNext()
+System.ArgumentNullException: The provided content link does not have a value.
+Parameter name: contentLink
+   at EPiServer.Core.Internal.DefaultContentLoader.Get[T](ContentReference contentLink, LoaderOptions loaderOptions)
+   at EPiServer.Core.Internal.DefaultContentLoader.Get[T](ContentReference contentLink)
+   at EPiServer.Core.Internal.DefaultContentRepository.Get[T](ContentReference contentLink)
+   at EPiServer.Core.Internal.DefaultContentRepository.GetDefault[T](ContentReference parentLink, Int32 contentTypeID, CultureInfo language)
+   at EPiServer.Core.Internal.DefaultContentRepository.GetDefault[T](ContentReference parentLink, CultureInfo language)
+   at EPiServer.Core.Internal.DefaultContentRepository.GetDefault[T](ContentReference parentLink)
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.GetPageWithName(String pageName) in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 64
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.CreateOrUpdatePage() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 146
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.Execute() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 168
+   at EPiServer.Scheduler.Internal.DefaultScheduledJobExecutor.<Execute>d__31.MoveNext()
+2020-12-14 16:33:22,788 [11] ERROR EPiServer.DataAbstraction.ScheduledJob: Job StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob failed for the job 'LoadOrUpdatePageJob' with jobId ='98d3c96d-a225-435b-8d13-c77fe9eef840' 
+System.InvalidCastException: Unable to cast object of type 'StartProjectGuide.Models.Blocks.TextBlock' to type 'EPiServer.Core.IContent'.
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.CreateOrUpdatePage() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 343
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.Execute() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 360
+   at EPiServer.Scheduler.Internal.DefaultScheduledJobExecutor.<Execute>d__31.MoveNext()
+System.InvalidCastException: Unable to cast object of type 'StartProjectGuide.Models.Blocks.TextBlock' to type 'EPiServer.Core.IContent'.
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.CreateOrUpdatePage() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 343
+   at StartProjectGuide.Business.Jobs.LoadOrUpdatePageJob.Execute() in C:\Users\bombayworks\source\repos\EpiServerStartProject\StartProjectGuide\Business\Jobs\LoadOrUpdatePageJob.cs:line 360
+   at EPiServer.Scheduler.Internal.DefaultScheduledJobExecutor.<Execute>d__31.MoveNext()

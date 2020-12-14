@@ -49,9 +49,6 @@
             foreach (var entry in WeatherDds.GetWeatherEntries())
             {
                 <div class="row justify-space-between">
-                    <span class="padded-16">
-                        @Html.Raw(entry.UserName)
-                    </span>
                     <span class="padded-16">@Html.Raw(entry.TimeStamp)</span>
                     <span class="padded-16">@Html.Raw(entry.WeatherDescription)</span>
                     <span class="padded-16">@Html.Raw(entry.WeatherComment)</span>

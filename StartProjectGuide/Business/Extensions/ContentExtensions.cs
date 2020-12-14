@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Castle.Core.Internal;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
@@ -65,6 +66,20 @@ namespace StartProjectGuide.Business.Extensions
             {
                 return null;
             }
+        }
+
+        public static PageData GetChildWithName(this ContentReference contentReference, string name)
+        {
+            IEnumerable<PageData> children = GetChildren(contentReference);
+            if (!children.IsNullOrEmpty())
+            {
+                var page = children.ToList().Find(x => x.Name == name);
+                if (page != null)
+                {
+                    return page;
+                }
+            }
+            return null;
         }
 
         /// <summary>
