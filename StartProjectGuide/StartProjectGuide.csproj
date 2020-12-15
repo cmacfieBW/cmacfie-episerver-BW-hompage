@@ -265,6 +265,7 @@
     <Compile Include="Controllers\ColorTextBlockController.cs" />
     <Compile Include="Controllers\ExtraNetPageController.cs" />
     <Compile Include="Controllers\FindSearchPageController.cs" />
+    <Compile Include="Controllers\GenericContainerBlockController.cs" />
     <Compile Include="Controllers\ImageTextBlockController.cs" />
     <Compile Include="Controllers\WorksPreviewBlockController.cs" />
     <Compile Include="Controllers\ContactPageController.cs" />
@@ -285,6 +286,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Blocks\ButtonBlock.cs" />
+    <Compile Include="Models\Blocks\GenericContainerBlock.cs" />
     <Compile Include="Models\Blocks\ImageTextBlock.cs" />
     <Compile Include="Models\Blocks\IntroBlock.cs" />
     <Compile Include="Models\Blocks\ImageBlock.cs" />
@@ -611,6 +613,7 @@
     <Content Include="Views\TextBlock\Index.cshtml" />
     <Content Include="Views\FindSearchPage\Index.cshtml" />
     <Content Include="Views\ExtraNetPage\Index.cshtml" />
+    <Content Include="Views\GenericContainerBlock\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

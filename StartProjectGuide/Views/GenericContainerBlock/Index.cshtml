@@ -1,0 +1,7 @@
+﻿@using EPiServer.Core
+@using EPiServer.Web.Mvc.Html
+@model StartProjectGuide.Models.Blocks.GenericContainerBlock
+@if (Model != null && Model.MainContentArea != null)
+{
+    @Html.PropertyFor(m => m.MainContentArea)
+}

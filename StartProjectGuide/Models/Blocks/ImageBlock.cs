@@ -6,6 +6,7 @@ using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
 using EPiServer.Shell.ObjectEditing;
 using EPiServer.Web;
+using StartProjectGuide.Business.BaseClasses;
 
 namespace StartProjectGuide.Models.Blocks
 {
@@ -13,7 +14,7 @@ namespace StartProjectGuide.Models.Blocks
         GUID = "09854019-91A5-4B93-8623-17F038346001",
         AvailableInEditMode = false,
         GroupName = Global.GroupNames.SiteSettings)]
-    public class ImageBlock : BlockData
+    public class ImageBlock : BaseBlockData
     {
         [DefaultDragAndDropTarget]
         [UIHint(UIHint.Image)]

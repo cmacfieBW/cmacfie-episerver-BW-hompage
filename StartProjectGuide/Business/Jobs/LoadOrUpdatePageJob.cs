@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Data.Entity.Core.Common.EntitySql;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Web;
 using System.Xml;
+using Castle.Core.Internal;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.Core.Internal;
@@ -55,7 +58,7 @@ namespace StartProjectGuide.Business.Jobs
         /// <param name="page"></param>
         /// <param name="parent"></param>
         /// <returns></returns>
-        private T GetPageWithName<T>(string pageName) where T: BasePageData
+        private T GetPageWithName<T>(string pageName) where T : BasePageData
         {
             PageReference startPage = ContentReference.StartPage;
             var page = startPage.GetChildWithName(pageName);
@@ -88,63 +91,134 @@ namespace StartProjectGuide.Business.Jobs
             return $@"<img src=""{src}"" title={title} />";
         }
 
-        private XhtmlString GenerateNewPageFromXML()
+        private TextBlock CreateHeaderBlock(ContentReference parent)
         {
-            StringBuilder sb = new StringBuilder();
-            bool caseNotDone = true;
-            while (xmlReader.Read() && caseNotDone)
+            var text = xmlReader.GetAttribute("text");
+            var type = xmlReader.GetAttribute("type") ?? "h1";
+            var html = FormatOpenAndClosedElement(text, "header", type);
+            TextBlock textBlock =
+                CreateGenericBlockForPage<TextBlock>(parent,
+                    "generated-headerblock");
+            textBlock.Body = new XhtmlString(html);
+            SaveGenericBlock(textBlock);
+            return textBlock;
+        }
+
+        private TextBlock CreateTextBlock(ContentReference parent)
+        {
+            var text = xmlReader.GetAttribute("text") ?? xmlReader.Value;
+            var html = FormatOpenAndClosedElement(text, "text", "span");
+            TextBlock textBlock =
+                CreateGenericBlockForPage<TextBlock>(parent,
+                    "generated-textblock");
+            textBlock.Body = new XhtmlString(html);
+            SaveGenericBlock(textBlock);
+            return textBlock;
+        }
+
+        private ImageBlock CreateImageBlock(ContentReference parent)
+        {
+            var title = xmlReader.GetAttribute("title");
+            var url = xmlReader.GetAttribute("url");
+            //TODO Check if img url can be resolved
+            //if (!url.IsNullOrEmpty())
+            //{
+            //    ImageBlock imgBlock =
+            //        CreateGenericBlockForPage<ImageBlock>(parent, $"image-{title}");
+            //    imgBlock.Url = url;
+            //    imgBlock.Title = title;
+            //    SaveGenericBlock(imgBlock);
+            //    return imgBlock;
+            //}
+
+            return null;
+        }
+        
+        private BaseBlockData GenerateNewPageFromXML(ContentReference parentReference, IList<BaseBlockData> outerBlocks, GenericContainerBlock parentWrapper)
+        {
+            while (xmlReader.Read())
             {
                 switch (xmlReader.NodeType)
                 {
+                    case XmlNodeType.EndElement:
+                        //End Element  
+                        if (parentWrapper != null && outerBlocks.Count > 1)
+                        {
+                            if (parentWrapper.MainContentArea == null)
+                            {
+                                parentWrapper.MainContentArea = new ContentArea();
+                            }
+                            foreach (var genericContainerBlock in outerBlocks)
+                            {
+                                ContentAreaItem item = new ContentAreaItem
+                                {
+                                    ContentLink = (genericContainerBlock as IContent).ContentLink
+                                };
+                                parentWrapper.MainContentArea.Items.Add(item);
+                            }
+                            repo.Save((parentWrapper as IContent), SaveAction.Publish, AccessLevel.Read);
+                            outerBlocks.Add(parentWrapper);
+                            return parentWrapper;
+                        }
+                        else if(outerBlocks.Any())
+                        {
+                            return outerBlocks.First();
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    case XmlNodeType.CDATA:
+                    case XmlNodeType.Text:
+                        //TEXT
+                        //CDATA
+                        TextBlock textBlock = CreateTextBlock(parentReference);
+                        if (textBlock != null)
+                        {
+                            outerBlocks.Add(textBlock);
+                        }
+
+                        break;
                     case (XmlNodeType.Element):
-                        var elementName = xmlReader.Name;
                         if (xmlReader.IsEmptyElement)
                         {
-                            switch (elementName)
+                            switch (xmlReader.Name)
                             {
-                                case "service":
-                                    sb.AppendLine(FormatOpenAndClosedElement(xmlReader.GetAttribute("title"), "service", "span"));
-                                    break;
+                                //case "service":
+                                //    sb.AppendLine(FormatOpenAndClosedElement(xmlReader.GetAttribute("title"), "service", "span"));
+                                //    break;
                                 case "image":
-                                    sb.AppendLine(FormatImageElement(xmlReader.GetAttribute("url"),
-                                        xmlReader.GetAttribute("title")));
+                                    ImageBlock imgBlock = CreateImageBlock(parentReference);
+                                    if (imgBlock != null)
+                                    {
+                                        outerBlocks.Add(imgBlock);
+                                    }
+
                                     break;
                                 case "header":
-                                    sb.AppendLine(FormatOpenAndClosedElement(xmlReader.GetAttribute("text"), "header", xmlReader.GetAttribute("type") ?? "h1"));
-                                    break;
-                                default:
-                                    sb.AppendLine(FormatOpenAndClosedElement(null, elementName));
+                                    TextBlock t = CreateHeaderBlock(parentReference);
+                                    if (t != null)
+                                    {
+                                        outerBlocks.Add(t);
+                                    }
                                     break;
                             }
                         }
                         else if (xmlReader.IsStartElement())
                         {
-                            sb.AppendLine(FormatOpenHTMLElement(elementName));
+                            GenericContainerBlock newWrapperBlock = CreateGenericBlockForPage<GenericContainerBlock>(parentReference, xmlReader.Name);
+                            var block = GenerateNewPageFromXML((newWrapperBlock as IContent).ContentLink, new List<BaseBlockData>(), newWrapperBlock);
+                            if (block != null)
+                            {
+                                outerBlocks.Add(block);
+                            }
                         }
 
                         break;
-                    case XmlNodeType.EndElement:
-                        //End Element  
-                        if (xmlReader.Name == "case")
-                        {
-                            caseNotDone = false;
-                        }
-                        sb.AppendLine(FormatCloseHTMLElement());
-                        break;
-                    case XmlNodeType.Attribute:
-                        //Attribute
-                        break;
-                    case XmlNodeType.CDATA:
-                    case XmlNodeType.Text:
-                        //TEXT
-                        //CDATA
-                        sb.AppendLine(FormatOpenAndClosedElement(xmlReader.Value, null, "span"));
-                        break;
-
                 }
-
             }
-            return new XhtmlString(sb.ToString());
+
+            return parentWrapper;
         }
 
         private T CreateGenericBlockForPage<T>(ContentReference parentPageReference, string newBlockName,
@@ -172,6 +246,11 @@ namespace StartProjectGuide.Business.Jobs
             return currPage;
         }
 
+        private void SaveGenericBlock<T>(T block) where T : BaseBlockData
+        {
+            repo.Save(block as IContent, SaveAction.Publish, AccessLevel.Read);
+        }
+
         /// <summary>
         /// Creates or updates an existing with page with data from a hardcoded XML-file.
         /// </summary>
@@ -186,22 +265,28 @@ namespace StartProjectGuide.Business.Jobs
                 if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "case")
                 {
                     var currPage = CreateOrGetExistingPage<StandardPage>();
-                    XhtmlString text = GenerateNewPageFromXML();
-                    
-                    //Textblock
-                    TextBlock textBlock = CreateGenericBlockForPage<TextBlock>(currPage.ContentLink, "GeneratedTextBlock", SaveAction.Publish, AccessLevel.Read);
-                    textBlock.Body = text;
-                    repo.Save(textBlock as IContent, SaveAction.Publish, AccessLevel.Read);
+                    currPage.MainContentArea = new ContentArea();
+                    //var servivesFound = false;
+                    //do
+                    //{
+                    //    if (xmlReader.Name == "sections")
+                    //    {
+                    //        servivesFound = true;
+                    //    }
+                    //} while (!servivesFound && xmlReader.Read());
+                    GenericContainerBlock outerMostWrapperBlock = CreateGenericBlockForPage<GenericContainerBlock>(currPage.ContentLink, "outermost wrapper");
+                    GenericContainerBlock outMostWrapper = GenerateNewPageFromXML(currPage.ContentLink, new List<BaseBlockData>(), outerMostWrapperBlock) as GenericContainerBlock;
+                    ContentArea area = outMostWrapper.MainContentArea;
+                    ////Textblock
+                    //TextBlock textBlock = CreateGenericBlockForPage<TextBlock>(currPage.ContentLink, "GeneratedTextBlock", SaveAction.Publish, AccessLevel.Read);
+                    //textBlock.Body = text;
+                    //repo.Save(textBlock as IContent, SaveAction.Publish, AccessLevel.Read);
 
                     //Add textblock to Content Area
-                    currPage.MainContentArea = new ContentArea();
-                    ContentAreaItem item = new ContentAreaItem
-                    {
-                        ContentLink = (textBlock as IContent).ContentLink
-                    };
-                    currPage.MainContentArea.Items.Add(item);
+                    //currPage.MainContentArea = new ContentArea();
+                    currPage.MainContentArea = area;
 
-                    //Save
+                    ////Save
                     repo.Save(currPage, SaveAction.Publish, AccessLevel.Read);
                 }
             }
