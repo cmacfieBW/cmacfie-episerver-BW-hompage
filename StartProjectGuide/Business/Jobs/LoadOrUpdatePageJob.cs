@@ -71,24 +71,10 @@ namespace StartProjectGuide.Business.Jobs
             return newPage;
         }
 
-        private string FormatOpenHTMLElement(string className = "", string type = "div")
-        {
-            var classString = !string.IsNullOrEmpty(className) ? $@" class=""{className}""" : null;
-            return $"<{type ?? "div"}{classString}>";
-        }
-        private string FormatCloseHTMLElement(string type = "div")
-        {
-            return $"</{type}>";
-        }
-
         private string FormatOpenAndClosedElement(string textValue, string className, string type = "div")
         {
-            return $"{FormatOpenHTMLElement(className, type)}{textValue}{FormatCloseHTMLElement(type)}";
-        }
-
-        private string FormatImageElement(string src, string title)
-        {
-            return $@"<img src=""{src}"" title={title} />";
+            var classString = !string.IsNullOrEmpty(className) ? $@" class=""{className}""" : null;
+            return $"<{type ?? "div"}{classString}>{textValue}</{type}>";
         }
 
         private TextBlock CreateHeaderBlock(ContentReference parent)
@@ -98,7 +84,7 @@ namespace StartProjectGuide.Business.Jobs
             var html = FormatOpenAndClosedElement(text, "header", type);
             TextBlock textBlock =
                 CreateGenericBlockForPage<TextBlock>(parent,
-                    "generated-headerblock");
+                    $"HeaderBlock - {text.Substring(0, 10)}");
             textBlock.Body = new XhtmlString(html);
             SaveGenericBlock(textBlock);
             return textBlock;
@@ -110,7 +96,7 @@ namespace StartProjectGuide.Business.Jobs
             var html = FormatOpenAndClosedElement(text, "text", "span");
             TextBlock textBlock =
                 CreateGenericBlockForPage<TextBlock>(parent,
-                    "generated-textblock");
+                    $"TextBlock - {text.Substring(0, 10)}");
             textBlock.Body = new XhtmlString(html);
             SaveGenericBlock(textBlock);
             return textBlock;
@@ -133,21 +119,31 @@ namespace StartProjectGuide.Business.Jobs
 
             return null;
         }
-        
-        private BaseBlockData GenerateNewPageFromXML(ContentReference parentReference, IList<BaseBlockData> outerBlocks, GenericContainerBlock parentWrapper)
+
+        /// <summary>
+        /// Recursively goes through the XML file and generates a block-tree.
+        /// </summary>
+        /// <param name="parentReference"></param>
+        /// <param name="outerBlocks"></param>
+        /// <param name="parentWrapper"></param>
+        /// <returns>A BaseBlockData with a ContentArea with all blocks in a tree structure </returns>
+        private BaseBlockData GenerateNewPageFromXMLSection(ContentReference parentReference, IList<BaseBlockData> outerBlocks, GenericContainerBlock parentWrapper)
         {
             while (xmlReader.Read())
             {
                 switch (xmlReader.NodeType)
                 {
                     case XmlNodeType.EndElement:
-                        //End Element  
+                        //Save Element  
+
+                        //Return the blocks within a section wrapper
                         if (parentWrapper != null && outerBlocks.Count > 1)
                         {
                             if (parentWrapper.MainContentArea == null)
                             {
                                 parentWrapper.MainContentArea = new ContentArea();
                             }
+
                             foreach (var genericContainerBlock in outerBlocks)
                             {
                                 ContentAreaItem item = new ContentAreaItem
@@ -156,11 +152,11 @@ namespace StartProjectGuide.Business.Jobs
                                 };
                                 parentWrapper.MainContentArea.Items.Add(item);
                             }
-                            repo.Save((parentWrapper as IContent), SaveAction.Publish, AccessLevel.Read);
-                            outerBlocks.Add(parentWrapper);
+                            SaveGenericBlock(parentWrapper);
                             return parentWrapper;
                         }
-                        else if(outerBlocks.Any())
+                        //Return just the single block
+                        else if (outerBlocks.Any())
                         {
                             return outerBlocks.First();
                         }
@@ -184,9 +180,9 @@ namespace StartProjectGuide.Business.Jobs
                         {
                             switch (xmlReader.Name)
                             {
-                                //case "service":
-                                //    sb.AppendLine(FormatOpenAndClosedElement(xmlReader.GetAttribute("title"), "service", "span"));
-                                //    break;
+                                case "video":
+                                    //TODO
+                                    break;
                                 case "image":
                                     ImageBlock imgBlock = CreateImageBlock(parentReference);
                                     if (imgBlock != null)
@@ -201,13 +197,16 @@ namespace StartProjectGuide.Business.Jobs
                                     {
                                         outerBlocks.Add(t);
                                     }
+
                                     break;
                             }
                         }
                         else if (xmlReader.IsStartElement())
                         {
-                            GenericContainerBlock newWrapperBlock = CreateGenericBlockForPage<GenericContainerBlock>(parentReference, xmlReader.Name);
-                            var block = GenerateNewPageFromXML((newWrapperBlock as IContent).ContentLink, new List<BaseBlockData>(), newWrapperBlock);
+                            GenericContainerBlock newWrapperBlock =
+                                CreateGenericBlockForPage<GenericContainerBlock>(parentReference, "Section wrapper");
+                            var block = GenerateNewPageFromXMLSection((newWrapperBlock as IContent).ContentLink,
+                                new List<BaseBlockData>(), newWrapperBlock);
                             if (block != null)
                             {
                                 outerBlocks.Add(block);
@@ -264,29 +263,21 @@ namespace StartProjectGuide.Business.Jobs
             {
                 if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "case")
                 {
+                    var id = xmlReader.GetAttribute("id");
+                    OnStatusChanged(String.Format("Executing job: {0}", id));
+
                     var currPage = CreateOrGetExistingPage<StandardPage>();
                     currPage.MainContentArea = new ContentArea();
-                    //var servivesFound = false;
-                    //do
-                    //{
-                    //    if (xmlReader.Name == "sections")
-                    //    {
-                    //        servivesFound = true;
-                    //    }
-                    //} while (!servivesFound && xmlReader.Read());
-                    GenericContainerBlock outerMostWrapperBlock = CreateGenericBlockForPage<GenericContainerBlock>(currPage.ContentLink, "outermost wrapper");
-                    GenericContainerBlock outMostWrapper = GenerateNewPageFromXML(currPage.ContentLink, new List<BaseBlockData>(), outerMostWrapperBlock) as GenericContainerBlock;
+                    while (xmlReader.Name != "sections")
+                    {
+                        xmlReader.Read();
+                    }
+                    GenericContainerBlock sectionsWrapper = CreateGenericBlockForPage<GenericContainerBlock>(currPage.ContentLink, "sectionsWrapper");
+                    GenericContainerBlock outMostWrapper = GenerateNewPageFromXMLSection(currPage.ContentLink, new List<BaseBlockData>(), sectionsWrapper) as GenericContainerBlock;
                     ContentArea area = outMostWrapper.MainContentArea;
-                    ////Textblock
-                    //TextBlock textBlock = CreateGenericBlockForPage<TextBlock>(currPage.ContentLink, "GeneratedTextBlock", SaveAction.Publish, AccessLevel.Read);
-                    //textBlock.Body = text;
-                    //repo.Save(textBlock as IContent, SaveAction.Publish, AccessLevel.Read);
-
-                    //Add textblock to Content Area
-                    //currPage.MainContentArea = new ContentArea();
                     currPage.MainContentArea = area;
 
-                    ////Save
+                    //Save
                     repo.Save(currPage, SaveAction.Publish, AccessLevel.Read);
                 }
             }
