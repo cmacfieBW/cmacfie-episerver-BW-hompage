@@ -68,6 +68,12 @@ namespace StartProjectGuide.Business.Extensions
             }
         }
 
+        /// <summary>
+        /// Returns a page with the specified @name, if it exists, otherwise null
+        /// </summary>
+        /// <param name="contentReference"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static PageData GetChildWithName(this ContentReference contentReference, string name)
         {
             IEnumerable<PageData> children = GetChildren(contentReference);
