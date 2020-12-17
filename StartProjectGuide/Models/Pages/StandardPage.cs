@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
 using EPiServer.SpecializedProperties;
 using StartProjectGuide.Business.BaseClasses;
+using StartProjectGuide.Models.Blocks;
 
 namespace StartProjectGuide.Models.Pages
 {
@@ -17,6 +19,10 @@ namespace StartProjectGuide.Models.Pages
             GroupName = SystemTabNames.Content,
             Order = 320)]
         public virtual ContentArea MainContentArea { get; set; }
+
+
+        [Display(Name = "Related pages", Description = "Optional list of pages related to this page", GroupName = SystemTabNames.Content, Order = 3)]
+        public virtual IList<ContentReference> RelatedPages { get; set; }
 
     }
 }

@@ -4,9 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.Data.Entity.Core.Common.EntitySql;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Web;
+using System.Web.UI.WebControls;
 using System.Xml;
 using Castle.Core.Internal;
 using EPiServer;
@@ -15,14 +18,17 @@ using EPiServer.Core.Internal;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
 using EPiServer.DataAnnotations;
+using EPiServer.Framework.Blobs;
 using EPiServer.PlugIn;
 using EPiServer.Scheduler;
 using EPiServer.Security;
 using EPiServer.ServiceLocation;
 using EPiServer.Web;
+using EPiServer.Web.Routing;
 using StartProjectGuide.Business.BaseClasses;
 using StartProjectGuide.Business.Extensions;
 using StartProjectGuide.Models.Blocks;
+using StartProjectGuide.Models.Media;
 using StartProjectGuide.Models.Pages;
 
 namespace StartProjectGuide.Business.Jobs
@@ -30,17 +36,20 @@ namespace StartProjectGuide.Business.Jobs
     [ScheduledPlugIn(DisplayName = "Load Or Update Page Job", GUID = "98d3c96d-a225-435b-8d13-c77fe9eef840", Description = "Loads or updates a page from the database")]
     public class LoadOrUpdatePageJob : ScheduledJobBase
     {
-        private XmlReader xmlReader;
-        private string stream = "~/Business/database/db.xml";
+        private const string Stream = "http://13.53.100.131/index.xml";
+        private const string JobName = "Load or update Page job";
+
+        private XmlReader _xmlReader;
         private bool _stopSignaled;
-        private string jobName = "Load or update Page job";
-        private IContentRepository repo;
+        private readonly IContentRepository _repo;
+        private readonly ContentAssetHelper _contentAssetHelper;
         public Injected<ISiteDefinitionRepository> SiteDefinitionRepository { get; set; }
 
         public LoadOrUpdatePageJob()
         {
-            repo = ServiceLocator.Current.GetInstance<IContentRepository>();
-            xmlReader = XmlReader.Create("C:/Users/bombayworks/source/repos/EpiServerStartProject/StartProjectGuide/Business/database/db.xml");
+            _repo = ServiceLocator.Current.GetInstance<IContentRepository>();
+            _contentAssetHelper = ServiceLocator.Current.GetInstance<ContentAssetHelper>();
+            _xmlReader = XmlReader.Create(Stream);
             IsStoppable = true;
         }
 
@@ -58,15 +67,26 @@ namespace StartProjectGuide.Business.Jobs
         /// <param name="page"></param>
         /// <param name="parent"></param>
         /// <returns></returns>
-        private T GetPageWithName<T>(string pageName) where T : BasePageData
+        private T GetOrCreatePageWithName<T>(string pageName, PageReference parent) where T : BasePageData
         {
-            PageReference startPage = ContentReference.StartPage;
-            var page = startPage.GetChildWithName(pageName);
+            if (parent == null)
+            {
+                parent = ContentReference.StartPage;
+            }
+            var page = parent.GetChildWithName(pageName);
             if (page != null)
             {
-                return (page.CreateWritableClone() as T);
+                var clone = (page.CreateWritableClone() as T);
+                var assetsFolderForPage = _contentAssetHelper.GetOrCreateAssetFolder(clone.ContentLink);
+                var children = _repo.GetChildren<IContent>(assetsFolderForPage.ContentLink);
+                foreach (var child in children)
+                {
+                    _repo.Delete(child.ContentLink, true, AccessLevel.Read);
+                }
+
+                return clone;
             }
-            var newPage = repo.GetDefault<T>(startPage);
+            var newPage = _repo.GetDefault<T>(parent);
             newPage.PageName = pageName;
             return newPage;
         }
@@ -77,48 +97,88 @@ namespace StartProjectGuide.Business.Jobs
             return $"<{type ?? "div"}{classString}>{textValue}</{type}>";
         }
 
-        private TextBlock CreateHeaderBlock(ContentReference parent)
+        private TextBlock CreateTextBlock(ContentReference parent, string text, string blockName)
         {
-            var text = xmlReader.GetAttribute("text");
-            var type = xmlReader.GetAttribute("type") ?? "h1";
-            var html = FormatOpenAndClosedElement(text, "header", type);
             TextBlock textBlock =
-                CreateGenericBlockForPage<TextBlock>(parent,
-                    $"HeaderBlock - {text.Substring(0, 10)}");
-            textBlock.Body = new XhtmlString(html);
+                CreateGenericBlockForPage<TextBlock>(parent, blockName);
+            textBlock.Body = new XhtmlString(text);
             SaveGenericBlock(textBlock);
             return textBlock;
         }
 
-        private TextBlock CreateTextBlock(ContentReference parent)
+        private ImageFile DownloadImage(ContentReference parent, string url, string title)
         {
-            var text = xmlReader.GetAttribute("text") ?? xmlReader.Value;
-            var html = FormatOpenAndClosedElement(text, "text", "span");
-            TextBlock textBlock =
-                CreateGenericBlockForPage<TextBlock>(parent,
-                    $"TextBlock - {text.Substring(0, 10)}");
-            textBlock.Body = new XhtmlString(html);
-            SaveGenericBlock(textBlock);
-            return textBlock;
-        }
-
-        private ImageBlock CreateImageBlock(ContentReference parent)
-        {
-            var title = xmlReader.GetAttribute("title");
-            var url = xmlReader.GetAttribute("url");
-            //TODO Check if img url can be resolved
-            //if (!url.IsNullOrEmpty())
-            //{
-            //    ImageBlock imgBlock =
-            //        CreateGenericBlockForPage<ImageBlock>(parent, $"image-{title}");
-            //    imgBlock.Url = url;
-            //    imgBlock.Title = title;
-            //    SaveGenericBlock(imgBlock);
-            //    return imgBlock;
-            //}
+            var imageFile = _repo.GetDefault<ImageFile>(_contentAssetHelper.GetOrCreateAssetFolder(parent).ContentLink);
+            imageFile.Name = $"image-{title}";
+            var blob = ImageDownloader.DownloadImageBlob(url);
+            if (blob != null)
+            {
+                imageFile.BinaryData = blob;
+                _repo.Save(imageFile, SaveAction.Publish);
+                return imageFile;
+            }
 
             return null;
         }
+
+        private ImageBlock CreateImageBlock(ContentReference parent, string url, string title)
+        {
+            ImageFile imageFile = DownloadImage(parent, url, title);
+            if (imageFile != null)
+            {
+                ImageBlock imgBlock =
+                    CreateGenericBlockForPage<ImageBlock>(parent, $"ImageBlock - {title}");
+                imgBlock.Url = url;
+                imgBlock.Title = title;
+                SaveGenericBlock(imgBlock);
+                return imgBlock;
+            }
+
+            return null;
+        }
+
+        //private IList<BaseBlockData> MergeBlocksToTextBlocks(ContentReference parent, IList<BaseBlockData> blocks)
+        //{
+        //    IList<BaseBlockData> mergedBlocks = new List<BaseBlockData>();
+        //    TextBlock currentBlock = CreateGenericBlockForPage<TextBlock>(parent,
+        //        $"MergedTextBlock");
+        //    foreach (var block in blocks)
+        //    {
+        //        if (block is TextBlock textBlock)
+        //        {
+        //            var header = textBlock.Header;
+        //            var body = textBlock.Body;
+        //            if (currentBlock.Header != null && (header != null || currentBlock.Body != null))
+        //            {
+        //                mergedBlocks.Add(currentBlock);
+        //                SaveGenericBlock(currentBlock);
+        //                currentBlock = CreateGenericBlockForPage<TextBlock>(parent,
+        //                    $"MergedTextBlock");
+        //            }
+        //            if (currentBlock.Header == null && header != null)
+        //            {
+        //                currentBlock.Header = header;
+        //            }
+
+        //            if (currentBlock.Body == null && body != null)
+        //            {
+        //                currentBlock.Body = body;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            mergedBlocks.Add(block);
+        //        }
+        //    }
+        //    if (currentBlock.Header != null)
+        //    {
+        //        SaveGenericBlock(currentBlock);
+        //        mergedBlocks.Add(currentBlock);
+        //    }
+
+        //    return mergedBlocks;
+
+        //}
 
         /// <summary>
         /// Recursively goes through the XML file and generates a block-tree.
@@ -129,9 +189,9 @@ namespace StartProjectGuide.Business.Jobs
         /// <returns>A BaseBlockData with a ContentArea with all blocks in a tree structure </returns>
         private BaseBlockData GenerateNewPageFromXMLSection(ContentReference parentReference, IList<BaseBlockData> outerBlocks, GenericContainerBlock parentWrapper)
         {
-            while (xmlReader.Read())
+            while (_xmlReader.Read())
             {
-                switch (xmlReader.NodeType)
+                switch (_xmlReader.NodeType)
                 {
                     case XmlNodeType.EndElement:
                         //Save Element  
@@ -143,6 +203,7 @@ namespace StartProjectGuide.Business.Jobs
                             {
                                 parentWrapper.MainContentArea = new ContentArea();
                             }
+
 
                             foreach (var genericContainerBlock in outerBlocks)
                             {
@@ -158,6 +219,12 @@ namespace StartProjectGuide.Business.Jobs
                         //Return just the single block
                         else if (outerBlocks.Any())
                         {
+                            if (parentWrapper != null)
+                            {
+                                _repo.Delete((parentWrapper as IContent).ContentLink, true, AccessLevel.Read);
+                            }
+
+                            SaveGenericBlock(outerBlocks.First());
                             return outerBlocks.First();
                         }
                         else
@@ -168,7 +235,9 @@ namespace StartProjectGuide.Business.Jobs
                     case XmlNodeType.Text:
                         //TEXT
                         //CDATA
-                        TextBlock textBlock = CreateTextBlock(parentReference);
+                        var text = _xmlReader.GetAttribute("text") ?? _xmlReader.Value;
+                        var html = FormatOpenAndClosedElement(text, "text", "p");
+                        TextBlock textBlock = CreateTextBlock(parentReference, html,  $"TextBlock - {text.Substring(0,Math.Min(text.Length, 20))}");
                         if (textBlock != null)
                         {
                             outerBlocks.Add(textBlock);
@@ -176,23 +245,31 @@ namespace StartProjectGuide.Business.Jobs
 
                         break;
                     case (XmlNodeType.Element):
-                        if (xmlReader.IsEmptyElement)
+                        if (_xmlReader.IsEmptyElement)
                         {
-                            switch (xmlReader.Name)
+                            switch (_xmlReader.Name)
                             {
                                 case "video":
                                     //TODO
                                     break;
                                 case "image":
-                                    ImageBlock imgBlock = CreateImageBlock(parentReference);
-                                    if (imgBlock != null)
+                                    var url = _xmlReader.GetAttribute("url");
+                                    var title = _xmlReader.GetAttribute("title");
+                                    if (!url.IsNullOrEmpty())
                                     {
-                                        outerBlocks.Add(imgBlock);
+                                        ImageBlock imgBlock = CreateImageBlock(parentReference, url, title);
+                                        if (imgBlock != null)
+                                        {
+                                            outerBlocks.Add(imgBlock);
+                                        }
                                     }
 
                                     break;
                                 case "header":
-                                    TextBlock t = CreateHeaderBlock(parentReference);
+                                    var headerText = _xmlReader.GetAttribute("text");
+                                    var type = _xmlReader.GetAttribute("type") ?? "h1";
+                                    var header = FormatOpenAndClosedElement(headerText, "header", type);
+                                    TextBlock t = CreateTextBlock(parentReference, header, $"HeaderBlock - {headerText.Substring(0, Math.Min(headerText.Length, 20))}");
                                     if (t != null)
                                     {
                                         outerBlocks.Add(t);
@@ -201,10 +278,15 @@ namespace StartProjectGuide.Business.Jobs
                                     break;
                             }
                         }
-                        else if (xmlReader.IsStartElement())
+                        else if (_xmlReader.IsStartElement())
                         {
+                            var background = _xmlReader.GetAttribute("background");
                             GenericContainerBlock newWrapperBlock =
                                 CreateGenericBlockForPage<GenericContainerBlock>(parentReference, "Section wrapper");
+                            if (!background.IsNullOrEmpty())
+                            {
+                                newWrapperBlock.BackgroundColor = background;
+                            }
                             var block = GenerateNewPageFromXMLSection((newWrapperBlock as IContent).ContentLink,
                                 new List<BaseBlockData>(), newWrapperBlock);
                             if (block != null)
@@ -223,31 +305,115 @@ namespace StartProjectGuide.Business.Jobs
         private T CreateGenericBlockForPage<T>(ContentReference parentPageReference, string newBlockName,
             SaveAction saveAction = SaveAction.Publish, AccessLevel accessLevel = AccessLevel.NoAccess) where T : BaseBlockData
         {
-            var assetsFolderForPage = ServiceLocator.Current
-                .GetInstance<ContentAssetHelper>()
-                .GetOrCreateAssetFolder(parentPageReference);
-            var blockInstance = repo.GetDefault<T>(assetsFolderForPage.ContentLink);
+            var assetsFolderForPage = _contentAssetHelper.GetOrCreateAssetFolder(parentPageReference);
+            var blockInstance = _repo.GetDefault<T>(assetsFolderForPage.ContentLink);
             var blockForPage = blockInstance as IContent;
             blockForPage.Name = newBlockName;
-            repo.Save(blockForPage, saveAction, accessLevel);
+            _repo.Save(blockForPage, saveAction, accessLevel);
             return blockInstance;
         }
 
         private T CreateOrGetExistingPage<T>() where T : BasePageData
         {
-            string title = xmlReader.GetAttribute("title");
-            string longTitle = xmlReader.GetAttribute("longtitle");
-
-            var currPage = GetPageWithName<T>(title);
+            string title = _xmlReader.GetAttribute("title");
+            string longTitle = _xmlReader.GetAttribute("longtitle");
+            var workLanding = ContentShortcuts.GetWorkLandingPageReference();
+            var currPage = GetOrCreatePageWithName<T>(title, workLanding.ToPageReference());
 
             currPage.VisibleInMenu = false;
             currPage.IntroSection.Header = longTitle ?? title;
+            SaveGenericPage(currPage);
             return currPage;
         }
 
         private void SaveGenericBlock<T>(T block) where T : BaseBlockData
         {
-            repo.Save(block as IContent, SaveAction.Publish, AccessLevel.Read);
+            _repo.Save(block as IContent, SaveAction.Publish, AccessLevel.Read);
+        }
+
+        private void SaveGenericPage<T>(T block) where T : BasePageData
+        {
+            _repo.Save(block as IContent, SaveAction.Publish, AccessLevel.Read);
+        }
+
+        private IList<ContentReference> GenerateRelatedPages()
+        {
+            IList<ContentReference> references = new List<ContentReference>();
+            var serviceLandingPage = ContentShortcuts.GetServiceLandingPageReference();
+            var services = serviceLandingPage.GetChildren().Select(x => x as ServicePage).ToList();
+            if (!serviceLandingPage.IsNullOrEmpty())
+            {
+                while (_xmlReader.Read() && _xmlReader.Name != "services")
+                {
+                    var title = _xmlReader.GetAttribute("title");
+                    if (_xmlReader.Name == "service" && title != null)
+                    {
+                        var service = services.Find(x => x.Name.ToLower().Contains(title.ToLower()));
+                        if (service != null)
+                        {
+                            ContentReference reference = service.ContentLink;
+                            if (reference != null)
+                            {
+                                references.Add(reference);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return references;
+        }
+
+        private string GetDescription()
+        {
+            while (_xmlReader.Read() && _xmlReader.NodeType != XmlNodeType.EndElement)
+            {
+                var value = _xmlReader.Value;
+                if (value != null)
+                {
+                    return value;
+                }
+
+            }
+            return null;
+        }
+
+        private string GetTagLine()
+        {
+            while (_xmlReader.Read() && _xmlReader.NodeType != XmlNodeType.EndElement)
+            {
+                var value = _xmlReader.Value;
+                if (value != null)
+                {
+                    return value;
+                }
+
+            }
+
+            return null;
+        }
+
+        private T AddServices<T>(T currPage) where T : StandardPage
+        {
+            var references = GenerateRelatedPages();
+            if (currPage.RelatedPages.IsNullOrEmpty())
+            {
+                currPage.RelatedPages = new List<ContentReference>();
+            }
+
+            currPage.RelatedPages = references;
+            return currPage;
+        }
+
+        private T AddSections<T>(T currPage) where T : StandardPage
+        {
+            GenericContainerBlock sectionsWrapper = CreateGenericBlockForPage<GenericContainerBlock>(currPage.ContentLink, "sectionsWrapper");
+            GenericContainerBlock outMostWrapper = GenerateNewPageFromXMLSection(currPage.ContentLink, new List<BaseBlockData>(), sectionsWrapper) as GenericContainerBlock;
+            ContentArea area = outMostWrapper.MainContentArea;
+            currPage.MainContentArea = area;
+
+            //Save
+            return currPage;
         }
 
         /// <summary>
@@ -259,35 +425,70 @@ namespace StartProjectGuide.Business.Jobs
             OnStatusChanged(String.Format("Starting execution of {0}", this.GetType()));
             SiteDefinition.Current = SiteDefinitionRepository.Service.List().First();
 
-            while (xmlReader.Read())
+            while (_xmlReader.Read())
             {
-                if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "case")
+                if (_xmlReader.NodeType == XmlNodeType.Element && _xmlReader.Name == "case")
                 {
-                    var id = xmlReader.GetAttribute("id");
+                    var longtitle = _xmlReader.GetAttribute("longtitle");
+                    var id = _xmlReader.GetAttribute("id");
+                    var imageUrl = _xmlReader.GetAttribute("image");
                     OnStatusChanged(String.Format("Executing job: {0}", id));
 
-                    var currPage = CreateOrGetExistingPage<StandardPage>();
-                    currPage.MainContentArea = new ContentArea();
-                    while (xmlReader.Name != "sections")
-                    {
-                        xmlReader.Read();
-                    }
-                    GenericContainerBlock sectionsWrapper = CreateGenericBlockForPage<GenericContainerBlock>(currPage.ContentLink, "sectionsWrapper");
-                    GenericContainerBlock outMostWrapper = GenerateNewPageFromXMLSection(currPage.ContentLink, new List<BaseBlockData>(), sectionsWrapper) as GenericContainerBlock;
-                    ContentArea area = outMostWrapper.MainContentArea;
-                    currPage.MainContentArea = area;
+                    WorkPage currPage = CreateOrGetExistingPage<WorkPage>();
+                    _repo.DeleteChildren(currPage.ContentLink, false, AccessLevel.Read);
 
-                    //Save
-                    repo.Save(currPage, SaveAction.Publish, AccessLevel.Read);
+
+                    if (!longtitle.IsNullOrEmpty())
+                    {
+                        currPage.IntroSection.Header = longtitle;
+                    }
+
+                    if (imageUrl != null)
+                    {
+                        var imgBlock = CreateImageBlock(currPage.ContentLink, imageUrl, $"{id}-header-image");
+                        if (imgBlock != null)
+                        {
+                            currPage.Image = imgBlock;
+                        }
+                    }
+
+                    currPage.MainContentArea = new ContentArea();
+                    while (_xmlReader.Read() && _xmlReader.Name != "case")
+                    {
+                        switch (_xmlReader.Name)
+                        {
+                            case "tagline":
+                                var tagline = GetTagLine();
+                                if (!tagline.IsNullOrEmpty())
+                                {
+                                    currPage.TeaserDescription = new XhtmlString(tagline);
+                                }
+                                break;
+                            case "description":
+                                var description = GetDescription();
+                                if (!description.IsNullOrEmpty())
+                                {
+                                    currPage.IntroSection.Preamble = new XhtmlString(description);
+                                }
+                                break;
+                            case "sections":
+                                currPage = AddSections(currPage);
+                                break;
+                            case "services":
+                                currPage = AddServices(currPage);
+                                break;
+                        }
+                    }
+                    SaveGenericPage(currPage);
                 }
             }
 
             if (_stopSignaled)
             {
-                return $"{jobName} was stopped manually";
+                return $"{JobName} was stopped manually";
             }
 
-            return $"Success. {jobName} finished.";
+            return $"Success. {JobName} finished.";
         }
     }
 }

@@ -10,8 +10,7 @@ namespace StartProjectGuide.Business.Extensions
 {
     public static class UserExtensions
     {
-
-        static UserExtensions() { }
+        
         private static class Group
         {
             public static string Administrator = "Administrators";

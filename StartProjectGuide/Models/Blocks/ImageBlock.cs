@@ -12,7 +12,6 @@ namespace StartProjectGuide.Models.Blocks
 {
     [ContentType(
         GUID = "09854019-91A5-4B93-8623-17F038346001",
-        AvailableInEditMode = false,
         GroupName = Global.GroupNames.SiteSettings)]
     public class ImageBlock : BaseBlockData
     {
@@ -30,6 +29,8 @@ namespace StartProjectGuide.Models.Blocks
                 this.SetPropertyValue(curr => curr.Url, value);
             }
         }
+        
+
         [CultureSpecific]
         public virtual string Title { get; set; }
 

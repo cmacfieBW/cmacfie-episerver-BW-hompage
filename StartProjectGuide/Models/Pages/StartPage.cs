@@ -18,7 +18,7 @@ namespace StartProjectGuide.Models.Pages
     [ContentType(DisplayName = "Start Page", GUID = "875088e0-edd9-4b5c-a993-d5b64770f7c9", Description = "Root type of page for the website", GroupName = Global.PageTypes.SpecialPage)]
     [AvailableContentTypes(
         Availability.Specific,
-        Include = new[] { typeof(FindSearchPage), typeof(ServiceLandingPage), typeof(WorkLandingPage), typeof(ContactLandingPage), typeof(StandardPage), typeof(LandingPage), typeof(ContentFolder), typeof(ExtraNetPage) }, // Pages we can create under the start page...
+        Include = new[] { typeof(WorkPage), typeof(FindSearchPage), typeof(ServiceLandingPage), typeof(WorkLandingPage), typeof(ContactLandingPage), typeof(StandardPage), typeof(LandingPage), typeof(ContentFolder), typeof(ExtraNetPage) }, // Pages we can create under the start page...
         ExcludeOn = new[] { typeof(FindSearchPage), typeof(ServiceLandingPage), typeof(WorkLandingPage), typeof(ContactLandingPage), typeof(StandardPage), typeof(LandingPage), typeof(ExtraNetPage) })] // ...and underneath those we can't create additional start pages
 
     public class StartPage : BasePageData
