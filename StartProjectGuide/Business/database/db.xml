@@ -15,7 +15,10 @@
 
         <sections>
             <header type='h2' text='DRIVING SALES - ONLINE AND OFFLINE' />
-            <text><![CDATA[ Our strategy & UX efforts aim to both delight and convert consumers. We are constantly optimising the functionality of the brand sites in line with e-commerce best practice. We aim drive sales - both online and offline - through Electrolux’s e-tailing and retailing partners. <i>So far our efforts have yielded</i> in triple digit growth in conversion year-on-year. ]]></text>
+          <text>
+            <![CDATA[ Our strategy & UX efforts aim to both delight and convert consumers. We are constantly optimising the functionality of the brand sites in line with e-commerce best practice. We aim drive sales - both online and offline - through Electrolux’s e-tailing and retailing partners. <i>So far our efforts have yielded</i> in triple digit growth in conversion year-on-year. ]]>
+            <![CDATA[ Our strategy & UX efforts aim to both delight and convert consumers. We are constantly optimising the functionality of the brand sites in line with e-commerce best practice. We aim drive sales - both online and offline - through Electrolux’s e-tailing and retailing partners. <i>So far our efforts have yielded</i> in triple digit growth in conversion year-on-year. ]]>
+          </text>
             <video id='289075282' style='site-wide' />
             <colums>
                 <colum>

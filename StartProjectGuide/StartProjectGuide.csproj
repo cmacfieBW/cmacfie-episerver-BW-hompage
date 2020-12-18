@@ -257,8 +257,11 @@
     <Compile Include="Business\ContentShortcuts.cs" />
     <Compile Include="Business\DynamicDataStore\WeatherDds.cs" />
     <Compile Include="Business\Extensions\ContentExtensions.cs" />
+    <Compile Include="Business\Extensions\StringExtensions.cs" />
     <Compile Include="Business\Extensions\UserExtensions.cs" />
+    <Compile Include="Business\Extensions\XmlReaderExtensions.cs" />
     <Compile Include="Business\ImageDownloader.cs" />
+    <Compile Include="Business\Jobs\IContentRepositoryExtensions.cs" />
     <Compile Include="Business\Jobs\ImportMediaJob.cs" />
     <Compile Include="Business\Jobs\LoadOrUpdatePageJob.cs" />
     <Compile Include="Business\Jobs\WriteDateJob.cs" />

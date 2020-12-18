@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using Castle.Core.Internal;
+using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
+using EPiServer.DataAccess;
 using EPiServer.DataAnnotations;
 using EPiServer.Framework.Blobs;
 using EPiServer.ServiceLocation;
@@ -15,8 +17,8 @@ namespace StartProjectGuide.Business
 {
     public static class ImageDownloader
     {
-        private static string[] _fileExtensions = { ".jpg", ".jpeg", ".png", ".svg" };
-        private static IBlobFactory _blobFactory = ServiceLocator.Current.GetInstance<IBlobFactory>();
+        private static readonly string[] FileExtensions = { ".jpg", ".jpeg", ".png", ".svg" };
+        private static readonly IBlobFactory BlobFactory = ServiceLocator.Current.GetInstance<IBlobFactory>();
 
         /// <summary>
         /// Downloads an image and returns it as a blob
@@ -39,9 +41,9 @@ namespace StartProjectGuide.Business
                 urlSubstring = url.Split('/').Last();
                 var extension = urlSubstring.Contains('.') ? url.Substring(url.LastIndexOf('.')) : "";
 
-                if (_fileExtensions.Contains(extension))
+                if (FileExtensions.Contains(extension))
                 {
-                    var blob = _blobFactory.CreateBlob(imageFile.BinaryDataContainer, extension);
+                    var blob = BlobFactory.CreateBlob(imageFile.BinaryDataContainer, extension);
                     using (var s = blob.OpenWrite())
                     {
                         var w = new StreamWriter(s);
