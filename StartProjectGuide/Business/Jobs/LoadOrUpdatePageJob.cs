@@ -138,7 +138,7 @@ namespace StartProjectGuide.Business.Jobs
             {
                 ImageBlock imgBlock =
                     CreateGenericBlockForPage<ImageBlock>(parent, $"ImageBlock - {t}");
-                imgBlock.Url = UrlResolver.Current.GetUrl(imageFile.ContentLink);
+                imgBlock.ImageReference = imageFile.ContentLink;
                 imgBlock.Title = t;
                 return imgBlock;
             }

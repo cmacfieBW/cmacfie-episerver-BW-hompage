@@ -7,6 +7,7 @@ using EPiServer.DataAnnotations;
 using EPiServer.Shell.ObjectEditing;
 using EPiServer.Web;
 using StartProjectGuide.Business.BaseClasses;
+using StartProjectGuide.Models.Media;
 
 namespace StartProjectGuide.Models.Blocks
 {
@@ -16,21 +17,10 @@ namespace StartProjectGuide.Models.Blocks
     public class ImageBlock : BaseBlockData
     {
         [DefaultDragAndDropTarget]
+        [AllowedTypes(typeof(ImageFile))]
         [UIHint(UIHint.Image)]
-        public virtual Url Url
-        {
-            get
-            {
-                var currentUrl = this.GetPropertyValue(curr => curr.Url);
-                return currentUrl != null && !currentUrl.IsEmpty() ? currentUrl : new Url("~/Static/images/no-image.png");
-            }
-            set
-            {
-                this.SetPropertyValue(curr => curr.Url, value);
-            }
-        }
+        public virtual ContentReference ImageReference { get; set; }
         
-
         [CultureSpecific]
         public virtual string Title { get; set; }
 
