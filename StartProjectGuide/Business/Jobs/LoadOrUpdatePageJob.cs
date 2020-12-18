@@ -37,14 +37,14 @@ namespace StartProjectGuide.Business.Jobs
     [ScheduledPlugIn(DisplayName = "Load Or Update Page Job", GUID = "98d3c96d-a225-435b-8d13-c77fe9eef840", Description = "Loads or updates a page from the database")]
     public class LoadOrUpdatePageJob : ScheduledJobBase
     {
-        private XmlReaderSettings _xmlReaderSettings;
+        private readonly XmlReaderSettings _xmlReaderSettings;
         private const string Stream = "http://13.53.100.131/index.xml";
         //private const string Stream = "C:/Users/bombayworks/source/repos/EpiServerStartProject/StartProjectGuide/Business/database/db.xml";
         private const string JobName = "Load or update Page job";
 
-        private XmlReader _xmlReader;
+        private readonly XmlReader _xmlReader;
         private bool _stopSignaled;
-        private ContentReference rootReference;
+        private ContentReference _rootReference;
         private readonly IContentRepository _repo;
         private readonly IContentLoader _contentLoader;
         private readonly ContentAssetHelper _contentAssetHelper;
@@ -181,7 +181,7 @@ namespace StartProjectGuide.Business.Jobs
                                 parentWrapper.MainContentArea.Items.Add(item);
                             }
 
-                            if (parentReference != rootReference)
+                            if (parentReference != _rootReference)
                             {
                                 _repo.SaveAndPublish(parentWrapper);
                             }
@@ -252,7 +252,7 @@ namespace StartProjectGuide.Business.Jobs
                             GenericContainerBlock newWrapperBlock =
                                 CreateGenericBlockForPage<GenericContainerBlock>(parentReference, $"Container- {_xmlReader.Name.CapitalizeFirstLetter()}");
                             var sectionReference = ContentReference.EmptyReference;
-                            if (_xmlReader.SectionHasDepth(Stream))
+                            if (_xmlReader.SectionHasManyChildren(Stream))
                             {
                                 sectionReference = _repo.SaveAndPublish(newWrapperBlock);
                             }
@@ -276,10 +276,9 @@ namespace StartProjectGuide.Business.Jobs
             return parentWrapper;
         }
 
-        private T CreateGenericBlockForPage<T>(ContentReference parentPageReference, string newBlockName,
-            SaveAction saveAction = SaveAction.Publish, AccessLevel accessLevel = AccessLevel.NoAccess) where T : BaseBlockData
+        private T CreateGenericBlockForPage<T>(ContentReference parentPageReference, string newBlockName) where T : BaseBlockData
         {
-            var reference = parentPageReference.IsNullOrEmpty() ? rootReference : parentPageReference;
+            var reference = parentPageReference.IsNullOrEmpty() ? _rootReference : parentPageReference;
             var assetsFolderForPage = _contentAssetHelper.GetOrCreateAssetFolder(reference);
             var blockInstance = _repo.GetDefault<T>(assetsFolderForPage.ContentLink);
             var blockForPage = blockInstance as IContent;
@@ -287,18 +286,14 @@ namespace StartProjectGuide.Business.Jobs
             return blockInstance;
         }
 
-        private T CreateOrGetExistingPage<T>() where T : BasePageData
+        private T CreateOrGetExistingPage<T>(string title) where T : BasePageData
         {
-            string title = _xmlReader.GetAttribute("title");
-            string longTitle = _xmlReader.GetAttribute("longtitle");
             var workLanding = ContentShortcuts.GetWorkLandingPageReference();
             var currPage = GetOrCreatePageWithName<T>(title, workLanding.ToPageReference());
-
-            currPage.VisibleInMenu = false;
-            currPage.IntroSection.Header = longTitle ?? title;
             _repo.SaveAndPublish(currPage);
             return currPage;
         }
+
         private IList<ContentReference> GenerateRelatedPages()
         {
             IList<ContentReference> references = new List<ContentReference>();
@@ -365,7 +360,6 @@ namespace StartProjectGuide.Business.Jobs
             ContentArea area = rootWrapper.MainContentArea;
             currPage.MainContentArea = area;
 
-            //Save
             return currPage;
         }
 
@@ -382,18 +376,19 @@ namespace StartProjectGuide.Business.Jobs
             {
                 if (_xmlReader.IsStartElement("case"))
                 {
-                    var longtitle = _xmlReader.GetAttribute("longtitle");
                     var id = _xmlReader.GetAttribute("id");
+                    OnStatusChanged($"Executing job: {id ?? "unknown"}");
+
+                    var title = _xmlReader.GetAttribute("title");
+                    var longTitle = _xmlReader.GetAttribute("longtitle");
                     var imageUrl = _xmlReader.GetAttribute("image");
+                    
+                    WorkPage currPage = CreateOrGetExistingPage<WorkPage>(title);
+                    _rootReference = currPage.ContentLink;
 
-                    OnStatusChanged($"Executing job: {id}");
-
-                    WorkPage currPage = CreateOrGetExistingPage<WorkPage>();
-                    rootReference = currPage.ContentLink;
-
-                    if (!longtitle.IsNullOrEmpty())
+                    if (!longTitle.IsNullOrEmpty())
                     {
-                        currPage.IntroSection.Header = longtitle;
+                        currPage.IntroSection.Header = longTitle;
                     }
 
                     if (imageUrl != null)
@@ -411,10 +406,10 @@ namespace StartProjectGuide.Business.Jobs
                         switch (_xmlReader.Name)
                         {
                             case "tagline":
-                                var tagline = GetStringFromShallowElement("tagline");
-                                if (!tagline.IsNullOrEmpty())
+                                var tagLine = GetStringFromShallowElement("tagline");
+                                if (!tagLine.IsNullOrEmpty())
                                 {
-                                    currPage.TeaserDescription = new XhtmlString(tagline);
+                                    currPage.TeaserDescription = new XhtmlString(tagLine);
                                 }
                                 break;
                             case "description":

@@ -77,3 +77,5 @@ System.NullReferenceException: Object reference not set to an instance of an obj
 2020-12-18 15:14:20,566 [6] ERROR EPiServer.Find.Cms.CmsUnifiedSearchSetUp: IAttachmentHelper can not be initiated.
 2020-12-18 15:18:17,713 [5] ERROR EPiServer.Find.Cms.CmsUnifiedSearchSetUp: IAttachmentHelper can not be initiated.
 2020-12-18 15:20:53,646 [6] ERROR EPiServer.Find.Cms.CmsUnifiedSearchSetUp: IAttachmentHelper can not be initiated.
+2020-12-18 15:30:16,645 [45] ERROR EPiServer.Find.Cms.CmsUnifiedSearchSetUp: IAttachmentHelper can not be initiated.
+2020-12-18 15:39:18,875 [20] ERROR EPiServer.Find.Cms.CmsUnifiedSearchSetUp: IAttachmentHelper can not be initiated.

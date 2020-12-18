@@ -17,11 +17,21 @@ namespace StartProjectGuide.Business.Extensions
             _counter = 0;
         }
 
-        public static int GetCounter(this XmlReader reader)
+        /// <summary>
+        /// Returns the current line number of the XmlReader
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        public static int GetLineNumber(this XmlReader reader)
         {
             return _counter;
         }
 
+        /// <summary>
+        /// Reads the next node of the stream and increases the line number counter
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public static bool ReadAndCount(this XmlReader reader)
         {
             _counter++;
@@ -30,7 +40,7 @@ namespace StartProjectGuide.Business.Extensions
 
 
         /// <summary>
-        /// Checks if the current line is an end-element with a certain name
+        /// Checks if the current line is an end-element with a certain node name
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="sectionName"></param>
@@ -40,12 +50,24 @@ namespace StartProjectGuide.Business.Extensions
             return (reader.Name == nodeName && reader.NodeType == XmlNodeType.EndElement);
         }
 
+        /// <summary>
+        /// Checks if the current line is the start of a new element with a certain node name
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="nodeName"></param>
+        /// <returns></returns>
         public static bool IsStartOfElementSection(this XmlReader reader, string nodeName)
         {
             return (reader.Name == nodeName && reader.NodeType == XmlNodeType.Element && reader.IsStartElement());
         }
 
-        public static int GetDepthOfSection(this XmlReader reader, string stream)
+        /// <summary>
+        /// Gets the number of children of a section, at a certain depth. Default is depth = 1
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static int GetNumOfChildrenOfSection(this XmlReader reader, string stream, int maxDepth = 1)
         {
             XmlReaderSettings settings = reader.Settings;
             var c = 0;
@@ -64,7 +86,7 @@ namespace StartProjectGuide.Business.Extensions
             while (xmlReaderClone.Read() &&
                    !(xmlReaderClone.NodeType == XmlNodeType.EndElement && xmlReaderClone.Name == name))
             {
-                if (xmlReaderClone.Depth == depth + 1 && xmlReaderClone.NodeType != XmlNodeType.EndElement)
+                if (xmlReaderClone.Depth == depth + maxDepth && xmlReaderClone.NodeType != XmlNodeType.EndElement)
                 {
                     c++;
                 }
@@ -73,9 +95,16 @@ namespace StartProjectGuide.Business.Extensions
             return c;
         }
 
-        public static bool SectionHasDepth(this XmlReader reader, string stream, int depth = 1)
+        /// <summary>
+        /// Checks if the current section has more than a number of children, default is numOfChildren = 1
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="stream"></param>
+        /// <param name="depth"></param>
+        /// <returns></returns>
+        public static bool SectionHasManyChildren(this XmlReader reader, string stream, int numOfChildren = 1)
         {
-            return GetDepthOfSection(reader, stream) > depth;
+            return GetNumOfChildrenOfSection(reader, stream) > numOfChildren;
         }
     }
 }
