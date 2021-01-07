@@ -71,81 +71,11 @@ namespace StartProjectGuide.Business.Jobs
             _stopSignaled = true;
         }
 
-        /// <summary>
-        /// Returns a new instance of a page with the page name set, or a clone of an existing one, if a page with than name already exists
-        /// </summary>
-        /// <param name="page"></param>
-        /// <param name="parent"></param>
-        /// <returns></returns>
-        private T GetOrCreatePageWithName<T>(string pageName, PageReference parent) where T : BasePageData
-        {
-            if (parent == null)
-            {
-                parent = ContentReference.StartPage;
-            }
-            var page = parent.GetChildWithName(pageName);
-            if (page != null)
-            {
-                var clone = (page.CreateWritableClone() as T);
-                var assetsFolderForPage = _contentAssetHelper.GetOrCreateAssetFolder(clone.ContentLink);
-                var children = _repo.GetChildren<IContent>(assetsFolderForPage.ContentLink);
-                foreach (var child in children)
-                {
-                    _repo.Delete(child.ContentLink, true, AccessLevel.Read);
-                }
-
-                return clone;
-            }
-            var newPage = _repo.GetDefault<T>(parent);
-            newPage.PageName = pageName;
-            return newPage;
-        }
-
         private string FormatOpenAndClosedElement(string textValue, string className, string type = "div")
         {
             var classString = !string.IsNullOrEmpty(className) ? $@" class=""{className}""" : null;
             return $"<{type ?? "div"}{classString}>{textValue}</{type}>";
         }
-
-        private TextBlock CreateTextBlock(ContentReference parent, string text, string blockName)
-        {
-            TextBlock textBlock =
-                CreateGenericBlockForPage<TextBlock>(parent, blockName);
-            textBlock.Body = new XhtmlString(text);
-            return textBlock;
-        }
-
-        private ImageFile DownloadImage(ContentReference parent, string url, string title)
-        {
-            var imageFile = _repo.GetDefault<ImageFile>(_contentAssetHelper.GetOrCreateAssetFolder(parent).ContentLink);
-            imageFile.Name = $"image-{title}";
-            var blob = ImageDownloader.DownloadImageBlob(url);
-            if (blob != null)
-            {
-                imageFile.BinaryData = blob;
-                _repo.Save(imageFile, SaveAction.Publish);
-                return imageFile;
-            }
-
-            return null;
-        }
-
-        private ImageBlock CreateImageBlock(ContentReference parent, string url, string title)
-        {
-            ImageFile imageFile = DownloadImage(parent, url, title);
-            var t = title ?? "untitled";
-            if (imageFile != null)
-            {
-                ImageBlock imgBlock =
-                    CreateGenericBlockForPage<ImageBlock>(parent, $"ImageBlock - {t}");
-                imgBlock.ImageReference = imageFile.ContentLink;
-                imgBlock.Title = t;
-                return imgBlock;
-            }
-
-            return null;
-        }
-
 
         /// <summary>
         /// Recursively goes through the XML file and generates a block-tree.
@@ -205,7 +135,7 @@ namespace StartProjectGuide.Business.Jobs
                         //CDATA
                         var text = _xmlReader.GetAttribute("text") ?? _xmlReader.Value;
                         var html = FormatOpenAndClosedElement(text, "text", "p");
-                        TextBlock textBlock = CreateTextBlock(parentReference, html, $"TextBlock - {text.Substring(0, Math.Min(text.Length, 20))}");
+                        TextBlock textBlock = BlockHelper.CreateTextBlock(parentReference ?? _rootReference, html, $"TextBlock - {text.Substring(0, Math.Min(text.Length, 20))}");
                         if (textBlock != null)
                         {
                             currentBlocksList.Add(textBlock);
@@ -225,7 +155,7 @@ namespace StartProjectGuide.Business.Jobs
                                     var title = _xmlReader.GetAttribute("title");
                                     if (!url.IsNullOrEmpty())
                                     {
-                                        ImageBlock imgBlock = CreateImageBlock(parentReference, url, title);
+                                        ImageBlock imgBlock = BlockHelper.CreateImageBlock(parentReference ?? _rootReference, url, title);
                                         if (imgBlock != null)
                                         {
                                             currentBlocksList.Add(imgBlock);
@@ -237,7 +167,7 @@ namespace StartProjectGuide.Business.Jobs
                                     var headerText = _xmlReader.GetAttribute("text");
                                     var type = _xmlReader.GetAttribute("type") ?? "h1";
                                     var header = FormatOpenAndClosedElement(headerText, "header", type);
-                                    TextBlock t = CreateTextBlock(parentReference, header, $"HeaderBlock - {headerText.Substring(0, Math.Min(headerText.Length, 20))}");
+                                    TextBlock t = BlockHelper.CreateTextBlock(parentReference ?? _rootReference, header, $"HeaderBlock - {headerText.Substring(0, Math.Min(headerText.Length, 20))}");
                                     if (t != null)
                                     {
                                         currentBlocksList.Add(t);
@@ -250,7 +180,7 @@ namespace StartProjectGuide.Business.Jobs
                         {
                             var background = _xmlReader.GetAttribute("background");
                             GenericContainerBlock newWrapperBlock =
-                                CreateGenericBlockForPage<GenericContainerBlock>(parentReference, $"Container- {_xmlReader.Name.CapitalizeFirstLetter()}");
+                                (parentReference ?? _rootReference).CreateGenericBlockForPage<GenericContainerBlock>($"Container- {_xmlReader.Name.CapitalizeFirstLetter()}");
                             var sectionReference = ContentReference.EmptyReference;
                             if (_xmlReader.SectionHasManyChildren(Stream))
                             {
@@ -274,24 +204,6 @@ namespace StartProjectGuide.Business.Jobs
             }
 
             return parentWrapper;
-        }
-
-        private T CreateGenericBlockForPage<T>(ContentReference parentPageReference, string newBlockName) where T : BaseBlockData
-        {
-            var reference = parentPageReference.IsNullOrEmpty() ? _rootReference : parentPageReference;
-            var assetsFolderForPage = _contentAssetHelper.GetOrCreateAssetFolder(reference);
-            var blockInstance = _repo.GetDefault<T>(assetsFolderForPage.ContentLink);
-            var blockForPage = blockInstance as IContent;
-            blockForPage.Name = newBlockName;
-            return blockInstance;
-        }
-
-        private T CreateOrGetExistingPage<T>(string title) where T : BasePageData
-        {
-            var workLanding = ContentShortcuts.GetWorkLandingPageReference();
-            var currPage = GetOrCreatePageWithName<T>(title, workLanding.ToPageReference());
-            _repo.SaveAndPublish(currPage);
-            return currPage;
         }
 
         private IList<ContentReference> GenerateRelatedPages()
@@ -321,26 +233,6 @@ namespace StartProjectGuide.Business.Jobs
 
             return references;
         }
-
-        /// <summary>
-        /// Returns a string value from an element with 1-level depth
-        /// </summary>
-        /// <param name="elementType"></param>
-        /// <returns></returns>
-        private string GetStringFromShallowElement(string elementType)
-        {
-            string value = null;
-            while (_xmlReader.ReadAndCount() && !_xmlReader.IsEndOfElementSection(elementType))
-            {
-                if (value == null)
-                {
-                    value = _xmlReader.Value;
-                }
-
-            }
-            return value;
-        }
-
         private T AddServices<T>(T currPage) where T : StandardPage
         {
             var references = GenerateRelatedPages();
@@ -355,7 +247,7 @@ namespace StartProjectGuide.Business.Jobs
 
         private T AddSections<T>(T currPage) where T : StandardPage
         {
-            GenericContainerBlock rootWrapper = CreateGenericBlockForPage<GenericContainerBlock>(currPage.ContentLink, "root");
+            GenericContainerBlock rootWrapper = currPage.ContentLink.CreateGenericBlockForPage<GenericContainerBlock>("root");
             rootWrapper = GenerateNewPageFromXMLSection(currPage.ContentLink, new List<BaseBlockData>(), rootWrapper) as GenericContainerBlock;
             ContentArea area = rootWrapper.MainContentArea;
             currPage.MainContentArea = area;
@@ -382,8 +274,14 @@ namespace StartProjectGuide.Business.Jobs
                     var title = _xmlReader.GetAttribute("title");
                     var longTitle = _xmlReader.GetAttribute("longtitle");
                     var imageUrl = _xmlReader.GetAttribute("image");
-                    
-                    WorkPage currPage = CreateOrGetExistingPage<WorkPage>(title);
+
+                    var workLanding = ContentShortcuts.GetWorkLandingPageReference() ?? ContentReference.StartPage;
+                    var currPage = workLanding.ToPageReference().GetOrCreatePageWithName<WorkPage>(title);
+                    if (currPage != null)
+                    {
+                        _repo.SaveAndPublish(currPage);
+                    }
+
                     _rootReference = currPage.ContentLink;
 
                     if (!longTitle.IsNullOrEmpty())
@@ -393,7 +291,7 @@ namespace StartProjectGuide.Business.Jobs
 
                     if (imageUrl != null)
                     {
-                        var imgBlock = CreateImageBlock(currPage.ContentLink, imageUrl, $"{id}-header-image");
+                        var imgBlock = BlockHelper.CreateImageBlock(_rootReference, imageUrl, $"{id}-header-image");
                         if (imgBlock != null)
                         {
                             currPage.Image = imgBlock;
@@ -406,14 +304,14 @@ namespace StartProjectGuide.Business.Jobs
                         switch (_xmlReader.Name)
                         {
                             case "tagline":
-                                var tagLine = GetStringFromShallowElement("tagline");
+                                var tagLine = _xmlReader.ReadShallowElementAndCount("tagline");
                                 if (!tagLine.IsNullOrEmpty())
                                 {
                                     currPage.TeaserDescription = new XhtmlString(tagLine);
                                 }
                                 break;
                             case "description":
-                                var description = GetStringFromShallowElement("description");
+                                var description = _xmlReader.ReadShallowElementAndCount("description");
                                 if (!description.IsNullOrEmpty())
                                 {
                                     currPage.IntroSection.Preamble = new XhtmlString(description);

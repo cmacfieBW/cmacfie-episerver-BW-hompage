@@ -11,6 +11,7 @@ using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
 using EPiServer.Filters;
 using EPiServer.Framework.Web;
+using EPiServer.Security;
 using EPiServer.ServiceLocation;
 using EPiServer.Web;
 using EPiServer.Web.Routing;
@@ -22,6 +23,8 @@ namespace StartProjectGuide.Business.Extensions
     public static class ContentExtensions
     {
         internal static UrlResolver UrlResolver;
+        internal static IContentRepository _repo;
+        internal static ContentAssetHelper _contentAssetHelper;
 
         static ContentExtensions()
         {
@@ -105,6 +108,26 @@ namespace StartProjectGuide.Business.Extensions
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Creates a new block of type T, and saves it to the ContentReference's assets folder
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parentPageReference"></param>
+        /// <param name="newBlockName"></param>
+        /// <returns></returns>
+        public static T CreateGenericBlockForPage<T>(this ContentReference parentPageReference, string newBlockName) where T : BaseBlockData
+        {
+            if (parentPageReference.IsNullOrEmpty())
+            {
+                return null;
+            }
+            var assetsFolderForPage = _contentAssetHelper.GetOrCreateAssetFolder(parentPageReference);
+            var blockInstance = _repo.GetDefault<T>(assetsFolderForPage.ContentLink);
+            var blockForPage = blockInstance as IContent;
+            blockForPage.Name = newBlockName;
+            return blockInstance;
         }
     }
 }

@@ -11,10 +11,19 @@ namespace StartProjectGuide.Business.Extensions
     {
 
         private static int _counter;
+        private static XmlReaderSettings _settings;
+        private static string _stream;
 
         static XmlReaderExtensions()
         {
             _counter = 0;
+        }
+
+        public static XmlReader Create(this XmlReader reader, string stream, XmlReaderSettings settings)
+        {
+            _settings = settings;
+            stream = _stream;
+            return XmlReader.Create(stream, settings);
         }
 
         /// <summary>
@@ -61,6 +70,11 @@ namespace StartProjectGuide.Business.Extensions
             return (reader.Name == nodeName && reader.NodeType == XmlNodeType.Element && reader.IsStartElement());
         }
 
+        public static XmlReader CreateClone(this XmlReader reader)
+        {
+            return XmlReader.Create(_stream, _settings);
+        }
+
         /// <summary>
         /// Gets the number of children of a section, at a certain depth. Default is depth = 1
         /// </summary>
@@ -105,6 +119,25 @@ namespace StartProjectGuide.Business.Extensions
         public static bool SectionHasManyChildren(this XmlReader reader, string stream, int numOfChildren = 1)
         {
             return GetNumOfChildrenOfSection(reader, stream) > numOfChildren;
+        }
+
+        /// <summary>
+        /// Returns a string value from an element with 1-level depth, and increases the reader index
+        /// </summary>
+        /// <param name="elementType"></param>
+        /// <returns></returns>
+        public static string ReadShallowElementAndCount(this XmlReader reader, string elementType)
+        {
+            string value = null;
+            while (reader.ReadAndCount() && !reader.IsEndOfElementSection(elementType))
+            {
+                if (value == null)
+                {
+                    value = reader.Value;
+                }
+
+            }
+            return value;
         }
     }
 }
