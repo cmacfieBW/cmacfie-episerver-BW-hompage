@@ -35,7 +35,7 @@ namespace StartProjectGuide.Business
         /// <returns></returns>
         public static ImageBlock CreateImageBlock(ContentReference parent, string url, string title)
         {
-            ImageFile imageFile = ImageDownloader.DownloadImage(parent, url, title);
+            ImageFile imageFile = ImageDownloaderHelper.DownloadImage(parent, url, title);
             var t = title ?? "untitled";
             if (imageFile != null)
             {

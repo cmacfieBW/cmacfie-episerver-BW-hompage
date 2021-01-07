@@ -15,7 +15,7 @@ using StartProjectGuide.Models.Media;
 
 namespace StartProjectGuide.Business
 {
-    public static class ImageDownloader
+    public static class ImageDownloaderHelper
     {
         private static readonly string[] FileExtensions = { ".jpg", ".jpeg", ".png", ".svg" };
         private static readonly IBlobFactory BlobFactory = ServiceLocator.Current.GetInstance<IBlobFactory>();
@@ -71,7 +71,7 @@ namespace StartProjectGuide.Business
         {
             var imageFile = Repo.GetDefault<ImageFile>(ContentAssetHelper.GetOrCreateAssetFolder(parent).ContentLink);
             imageFile.Name = $"image-{title}";
-            var blob = ImageDownloader.DownloadImageBlob(url);
+            var blob = ImageDownloaderHelper.DownloadImageBlob(url);
             if (blob != null)
             {
                 imageFile.BinaryData = blob;
