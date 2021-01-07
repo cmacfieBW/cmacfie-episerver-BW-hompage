@@ -72,7 +72,13 @@ namespace StartProjectGuide.Business.Extensions
 
         public static XmlReader CreateClone(this XmlReader reader)
         {
-            return XmlReader.Create(_stream, _settings);
+            var clone = XmlReader.Create(_stream, _settings);
+            var c = 0;
+            while (clone.Read() && c < _counter - 1)
+            {
+                c++;
+            }
+            return clone;
         }
 
         /// <summary>
@@ -81,22 +87,15 @@ namespace StartProjectGuide.Business.Extensions
         /// <param name="reader"></param>
         /// <param name="stream"></param>
         /// <returns></returns>
-        public static int GetNumOfChildrenOfSection(this XmlReader reader, string stream, int maxDepth = 1)
+        public static int GetNumOfChildrenOfSection(this XmlReader reader, int maxDepth = 1)
         {
-            XmlReaderSettings settings = reader.Settings;
-            var c = 0;
-            var xmlReaderClone = XmlReader.Create(stream, settings);
-            while (xmlReaderClone.Read() && c < _counter - 1)
-            {
-                c++;
-            }
+            var xmlReaderClone = reader.CreateClone();
 
+            var c = 0;
             var name = xmlReaderClone.Name;
             var line = xmlReaderClone.Value;
 
-
-            c = 0;
-            var depth = xmlReaderClone.Depth;
+                        var depth = xmlReaderClone.Depth;
             while (xmlReaderClone.Read() &&
                    !(xmlReaderClone.NodeType == XmlNodeType.EndElement && xmlReaderClone.Name == name))
             {
@@ -116,9 +115,9 @@ namespace StartProjectGuide.Business.Extensions
         /// <param name="stream"></param>
         /// <param name="depth"></param>
         /// <returns></returns>
-        public static bool SectionHasManyChildren(this XmlReader reader, string stream, int numOfChildren = 1)
+        public static bool SectionHasManyChildren(this XmlReader reader, int numOfChildren = 1)
         {
-            return GetNumOfChildrenOfSection(reader, stream) > numOfChildren;
+            return GetNumOfChildrenOfSection(reader) > numOfChildren;
         }
 
         /// <summary>
@@ -129,13 +128,16 @@ namespace StartProjectGuide.Business.Extensions
         public static string ReadShallowElementAndCount(this XmlReader reader, string elementType)
         {
             string value = null;
-            while (reader.ReadAndCount() && !reader.IsEndOfElementSection(elementType))
+            if (reader.GetNumOfChildrenOfSection() == 1)
             {
-                if (value == null)
+                while (reader.ReadAndCount() && !reader.IsEndOfElementSection(elementType))
                 {
-                    value = reader.Value;
-                }
+                    if (value == null)
+                    {
+                        value = reader.Value;
+                    }
 
+                }
             }
             return value;
         }
